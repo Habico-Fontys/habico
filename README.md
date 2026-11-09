@@ -6,26 +6,26 @@ First, run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Habico
+
+Frontend-only prototype for the Habico student-housing dashboard. Dashboard content is dummy data; login is a client-side demo check only. No API, database, or real authentication is configured.
+
+## Starten
+
+```bash
+npm install
+npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open <http://localhost:3000>. Demo-login: gebruikersnaam `admin`, wachtwoord `habico123`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Structuur
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `app/`: App Router-pagina's en layouts.
+- `components/`: herbruikbare interfacecomponenten.
+- `data/`: tijdelijke login-constanten en dashboard-dummydata.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+De kleur- en fonttokens staan in `app/globals.css` als Tailwind-theme. Vervang later `data/auth.ts` door echte authenticatie en `data/mock.ts` door een databron.
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
