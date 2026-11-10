@@ -14,6 +14,11 @@ body {
   background: linear-gradient(140deg, rgba(0, 35, 71, 0.28), transparent 50%, rgba(255, 142, 0, 0.2));
 }
 
+.dashboard-diamond-dots {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath d='M8 5.5 10.5 8 8 10.5 5.5 8 8 5.5Z' fill='%23FCFAF6'/%3E%3C/svg%3E");
+  background-size: 16px 16px;
+}
+
 @keyframes rise-in {
   from { opacity: 0; transform: translateY(14px); }
   to { opacity: 1; transform: translateY(0); }

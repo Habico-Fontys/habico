@@ -5,10 +5,12 @@
   --color-habico-orange-red: #ff5003;
   --color-fire-orange: #fd7702;
   --color-tangy-blue: #1d38ff;
+  --color-habico-soft-blue: #EBEDFF;
   --color-habico-blue: #003f7d;
   --color-habico-navy: #003366;
   --color-habico-navy-dark: #002347;
   --color-habico-grey: #d9d9d9;
+  --color-habico-landing: #F4F5FA;
   --color-habico-white: #fcfaf6;
   --font-poppins: var(--font-poppins-custom), sans-serif;
 }

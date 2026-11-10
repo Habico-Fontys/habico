@@ -24,23 +24,27 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="bg-habico-navy-dark text-habico-white flex w-full shrink-0 flex-col px-4 py-4 md:sticky md:top-0 md:h-screen md:w-[248px] md:px-5 md:py-7">
+    <aside className="bg-habico-white text-ink flex w-full shrink-0 flex-col px-4 py-4 md:sticky md:top-0 md:h-screen md:w-[248px] md:px-5 md:py-7">
       <Link
         href="/dashboard"
         aria-label="Habico dashboard"
         className="flex w-fit items-center px-1 md:px-2"
       >
-        <Logo variant="light" />
+        <Logo />
       </Link>
-      <div className="border-habico-white/10 bg-habico-white/[0.04] mt-5 hidden items-center gap-3 rounded-xl border px-3 py-3 md:flex">
-        <span className="bg-habico-orange text-habico-white grid size-9 place-items-center rounded-full text-xs font-extrabold">
-          MH
+      <div className="border-habico-white/10 bg-habico-landing mt-5 hidden items-center gap-3 rounded-xl border px-3 py-3 md:flex">
+        <span className="bg-habico-white text-tangy-blue grid size-9 place-items-center rounded-full text-xs font-extrabold">
+          <svg aria-hidden="true" className="size-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <path d="m3 10 9-7 9 7" />
+            <path d="M5.5 9v11h13V9M9.5 20v-6h5v6" />
+          </svg>
         </span>
         <span className="min-w-0">
-          <span className="text-habico-white/45 block text-[10px] font-semibold tracking-[0.12em] uppercase">
+          <span className="mt-0.5 block truncate text-sm font-bold">Maple House</span>
+          <span className="text-habico-grey block text-[10px] font-semibold tracking-[0.12em] uppercase">
             Jouw huis
           </span>
-          <span className="mt-0.5 block truncate text-sm font-bold">Maple House</span>
+        
         </span>
         <span className="text-habico-white/50 ml-auto text-xs" aria-hidden="true">
           ⌄
@@ -62,11 +66,11 @@ export function Sidebar() {
               key={item.href}
               href={item.href}
               aria-current={active ? 'page' : undefined}
-              className={`flex min-h-11 shrink-0 items-center gap-3 rounded-xl px-3 text-xs font-semibold transition-colors md:min-h-12 md:text-sm ${active ? 'bg-habico-blue text-habico-white shadow-sm' : 'text-habico-white/65 hover:bg-habico-white/[0.07] hover:text-habico-white'}`}
+              className={`flex min-h-11 shrink-0 items-center gap-3 rounded-xl px-3 text-xs font-semibold transition-colors md:min-h-12 md:text-sm ${active ? 'bg-habico-soft-blue text-tangy-blue shadow-sm' : 'text-habico-white/65 hover:bg-habico-white/[0.07] hover:text-habico-white'}`}
             >
               <svg
                 aria-hidden="true"
-                className="size-4 shrink-0"
+                className={`size-4 shrink-0 ${active ? 'text-tangy-blue' : undefined}`}
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
@@ -76,7 +80,7 @@ export function Sidebar() {
               >
                 <path d={paths[item.icon]} />
               </svg>
-              <span>{item.label}</span>
+              <span className={active ? 'text-tangy-blue' : undefined}>{item.label}</span>
               {active && (
                 <span className="bg-habico-orange ml-auto hidden h-5 w-1 rounded-full md:block" />
               )}
@@ -84,14 +88,21 @@ export function Sidebar() {
           );
         })}
       </nav>
-      <div className="from-habico-blue to-tangy-blue mt-5 hidden rounded-2xl bg-gradient-to-br p-4 md:mt-auto md:block">
-        <span className="bg-habico-white/15 text-habico-orange grid size-8 place-items-center rounded-lg">
-          ✳
-        </span>
-        <p className="mt-3 text-sm font-bold">Samen sterk.</p>
-        <p className="text-habico-white/70 mt-1 text-[11px] leading-relaxed">
-          Een fijn huis begint met kleine dingen samen doen.
-        </p>
+      
+      <div className="from-habico-blue to-tangy-blue relative mt-5 hidden overflow-hidden rounded-2xl bg-gradient-to-br p-4 md:mt-auto md:block">
+        <div
+          aria-hidden="true"
+          className="bg-habico-orange absolute -top-16 -left-12 size-40 rounded-full"
+        />
+        <div className="relative z-10">
+          <span className="bg-habico-white/15 text-habico-white grid size-8 place-items-center rounded-lg">
+            ✳
+          </span>
+          <p className="mt-3 text-sm font-bold text-habico-white">Samen sterk.</p>
+          <p className="text-habico-white/70 mt-1 text-[11px] leading-relaxed">
+            Een fijn huis begint met kleine dingen samen doen.
+          </p>
+        </div>
       </div>
       <div className="border-habico-white/10 mt-4 hidden items-center gap-3 border-t pt-5 md:flex">
         <span className="bg-habico-orange/20 text-habico-orange grid size-9 place-items-center rounded-full text-xs font-bold">

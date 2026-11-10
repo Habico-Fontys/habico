@@ -10,10 +10,10 @@ export function DashboardChart() {
     <Card className="min-w-0">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-habico-blue/55 text-xs font-bold tracking-[0.12em] uppercase">
+          <p className="text-habico-blue/55 text-xs font-normal tracking-[0.12em] uppercase">
             Huis in balans
           </p>
-          <h2 className="text-habico-navy-dark mt-1 text-lg font-extrabold">
+          <h2 className="text-habico-navy-dark mt-1 text-lg font-normal">
             Activiteit deze week
           </h2>
         </div>
@@ -22,7 +22,7 @@ export function DashboardChart() {
         </span>
       </div>
       <div className="mt-6 flex items-end gap-2">
-        <span className="text-habico-navy-dark text-3xl font-extrabold">78%</span>
+        <span className="text-habico-navy-dark text-3xl font-bold ">78%</span>
         <span className="bg-tangy-blue/10 text-habico-blue mb-1 rounded-full px-2 py-1 text-[10px] font-bold">
           +8.4%
         </span>

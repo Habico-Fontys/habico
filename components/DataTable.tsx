@@ -15,7 +15,7 @@ const columns: Column<ActivityRow>[] = [
     heading: 'Activiteit',
     render: (row) => (
       <div className="min-w-48">
-        <p className="text-habico-navy-dark font-bold">{row.name}</p>
+        <p className="text-habico-navy-dark font-semibold">{row.name}</p>
         <p className="text-habico-blue/60 mt-1 text-xs">{row.detail}</p>
       </div>
     ),
