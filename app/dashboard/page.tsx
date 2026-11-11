@@ -69,19 +69,19 @@ export default function DashboardPage() {
                   >
                     
                     <span>
-                      <span className="block text-sm leading-none font-extrabold">{item.day}</span>
-                      <span className="mt-1 block text-[7px] font-bold">{item.month}</span>
+                      <span className="block text-[20px] leading-none font-semibold">{item.day}</span>
+                      <span className="mt-1 block text-[10px] font-bold">{item.month}</span>
                     </span>
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="text-habico-white block truncate text-xs font-semibold">
+                    <span className="text-habico-white block truncate text-m font-semibold">
                       {item.title}
                     </span>
-                    <span className="text-habico-white mt-1 block truncate text-[10px]">
+                    <span className="text-habico-white mt-1 block truncate text-[12px]">
                       {item.person}
                     </span>
                   </span>
-                  <span className="text-habico-white text-[10px] font-semibold">{item.time}</span>
+                  <span className="text-habico-white text-[14px] font-semibold">{item.time}</span>
                 </div>
               ))}
             </div>
