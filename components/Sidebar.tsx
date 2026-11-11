@@ -80,7 +80,9 @@ export function Sidebar() {
               >
                 <path d={paths[item.icon]} />
               </svg>
-              <span className={active ? 'text-tangy-blue' : undefined}>{item.label}</span>
+              <span className={active ? 'text-tangy-blue' : 'text-habico-blue/70'}>
+                {item.label}
+              </span>
               {active && (
                 <span className="bg-habico-orange ml-auto hidden h-5 w-1 rounded-full md:block" />
               )}

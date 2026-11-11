@@ -39,7 +39,7 @@ export default function DashboardPage() {
           />
           <div
             aria-hidden="true"
-            className="bg-habico-orange pointer-events-none absolute right-[-40px] bottom-[-40px] size-40 rounded-full"
+            className="bg-habico-orange pointer-events-none absolute right-[-50px] bottom-[-60px] size-40 rounded-full"
           />
           <span
             aria-hidden="true"
@@ -86,7 +86,7 @@ export default function DashboardPage() {
               ))}
             </div>
             <Link
-              className="text-habico-white hover:text-habico-orange-red mt-2 inline-flex items-center gap-2 text-xs font-bold transition"
+              className="text-habico-white hover:text-habico-orange-red mt-2 inline-flex items-center gap-2 pt-4 text-xs font-bold transition"
               href="/dashboard/activiteiten"
             >
               Bekijk agenda <span aria-hidden="true">→</span>
