@@ -26,9 +26,9 @@ export function LoginPage() {
             Welkom thuis
           </p>
           <h1 className="text-habico-navy-dark mt-3 text-[30px] leading-tight font-extrabold sm:text-[34px]">
-            Samen begint
+            Samen leven
             <br />
-            het hier<span className="text-habico-orange">.</span>
+            begint hier<span className="text-habico-orange">.</span>
           </h1>
           <p className="text-habico-blue/70 mx-auto mt-3 max-w-[300px] text-sm leading-relaxed">
             Connecting People, Creating Solutions.
