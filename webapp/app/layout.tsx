@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Poppins } from 'next/font/google';
 import './globals.css';
 import './theme.css';
@@ -13,6 +13,8 @@ export const metadata: Metadata = {
   title: 'Habico | Connecting People, Creating Solutions.',
   description: 'Het overzicht voor jouw studentenhuis.',
 };
+
+export const viewport: Viewport = { viewportFit: 'cover' };
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (

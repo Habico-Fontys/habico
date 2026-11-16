@@ -18,7 +18,7 @@ export type ActivityRow = {
 export const dashboardStats: DashboardStat[] = [
   { label: "Bewoners actief", value: "24", change: "+3 deze maand", positive: true, icon: "people" },
   { label: "Taken afgerond", value: "86%", change: "+12% deze week", positive: true, icon: "check" },
-  { label: "Huisactiviteiten", value: "08", change: "2 vandaag", positive: true, icon: "activity" },
+  { label: "Activiteiten", value: "08", change: "2 vandaag", positive: true, icon: "activity" },
   { label: "Open meldingen", value: "03", change: "1 vraagt aandacht", positive: false, icon: "spark" },
 ];
 

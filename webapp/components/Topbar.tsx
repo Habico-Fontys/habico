@@ -7,6 +7,7 @@ const pageTitles: Record<string, string> = {
   '/dashboard': 'Dashboard',
   '/dashboard/huisgenoten': 'Huisgenoten',
   '/dashboard/activiteiten': 'Activiteiten',
+  '/dashboard/boodschappenlijst': 'Boodschappen',
   '/dashboard/instellingen': 'Instellingen',
 };
 
@@ -16,7 +17,7 @@ export function Topbar() {
   const title = pageTitles[pathname] ?? 'Dashboard';
 
   return (
-    <header className="border-habico-grey/70 color-habico-landing/90 flex min-h-[76px] items-center justify-between gap-4 sm:px-7 lg:px-10">
+    <header className="flex min-h-[76px] items-center justify-between gap-4 border-b border-habico-grey/70 bg-habico-landing/90 px-4 sm:px-7 lg:px-10">
       <div className="min-w-0">
         <h1 className="truncate text-lg font-semibold text-habico-navy">{title}</h1>
       </div>
@@ -25,12 +26,11 @@ export function Topbar() {
           <span className="bg-habico-orange size-2 rounded-full" /> Maandag, 9 november
         </span>
         <Button
-          className="min-h-10 rounded-lg px-3 text-xs sm:px-4"
+          className="min-h-10 whitespace-nowrap rounded-lg px-3 text-xs sm:px-4"
           variant="secondary"
           onClick={() => router.push('/login')}
         >
-          <span className="hidden sm:inline">Uitloggen</span>
-          <span className="sm:hidden">Uit</span>
+          Uitloggen
           <span aria-hidden="true">↗</span>
         </Button>
       </div>
