@@ -215,7 +215,7 @@ export default function ActivitiesPage() {
         </div>
         <Button onClick={toggleForm}>
           <span aria-hidden="true" className="text-lg leading-none">
-            +
+            {showForm ? '-' : '+'}
           </span>
           {showForm ? 'Sluiten' : 'Activiteit toevoegen'}
         </Button>
