@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // AGENTS.md lives at the repo root (shared with the embedded project); stop `next dev` from recreating one here.
+  agentRules: false,
   cacheComponents: true,
   partialPrefetching: true,
   images: {
