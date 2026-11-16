@@ -13,6 +13,12 @@
   --color-habico-landing: #F4F5FA;
   --color-habico-white: #fcfaf6;
   --font-poppins: var(--font-poppins-custom), sans-serif;
+   --animate-wiggle: wiggle 2.5s ease-in-out infinite;
+
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
+  }
 }
 
 :root {
