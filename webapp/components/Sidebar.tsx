@@ -10,6 +10,7 @@ const items = [
   { href: '/dashboard/activiteiten', label: 'Activiteiten', icon: 'activity' },
   { href: '/dashboard/instellingen', label: 'Instellingen', icon: 'settings' },
   { href: '/dashboard/boodschappenlijst', label: 'Boodschappen', icon: 'shoppingcart' },
+  { href: '/dashboard/takenlijst', label: 'Takenlijst', icon: 'shoppingcart' },
 ];
 
 const paths: Record<string, string> = {
