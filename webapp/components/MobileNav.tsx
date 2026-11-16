@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   CalendarDays,
   Check,
@@ -13,6 +13,7 @@ import {
   Settings,
   ShoppingCart,
   Users,
+  ListChecks,
   type LucideIcon,
 } from "lucide-react";
 
@@ -25,6 +26,7 @@ const alleItems: NavItem[] = [
   { id: "activiteiten", href: "/dashboard/activiteiten", label: "Activiteiten", icon: CalendarDays },
   { id: "huisgenoten", href: "/dashboard/huisgenoten", label: "Huisgenoten", icon: Users },
   { id: "instellingen", href: "/dashboard/instellingen", label: "Instellingen", icon: Settings },
+  { id: "takenlijst", href: "/dashboard/takenlijst", label: "Takenlijst", icon: ListChecks },
 ];
 
 // Zo ziet de balk eruit totdat de gebruiker iets aanpast
@@ -70,12 +72,14 @@ function Blob({ zichtbaar }: { zichtbaar: boolean }) {
 
 export default function MobileNav() {
   const pathname = usePathname();
+  const router = useRouter();
   const huidigId = zoekHuidigId(pathname);
   const [open, setOpen] = useState(false);
   const [bewerken, setBewerken] = useState(false);
   const [gekozenSlot, setGekozenSlot] = useState<number | null>(null);
   const [balkIds, setBalkIds] = useState<string[]>(standaardIds);
   const [geladen, setGeladen] = useState(false);
+  const [flashingId, setFlashingId] = useState<string | null>(null);
 
   // ---------- Opslaan en laden ----------
   useEffect(() => {
@@ -126,6 +130,15 @@ export default function MobileNav() {
     setOpen(false);
     setBewerken(false);
     setGekozenSlot(null);
+  }
+
+  function navigeerViaMenu(item: NavItem) {
+    setFlashingId(item.id);
+    window.setTimeout(() => {
+      setFlashingId(null);
+      sluit();
+      router.push(item.href);
+    }, 250);
   }
 
   // Tik op een icoon in de balk (alleen tijdens het aanpassen)
@@ -236,7 +249,6 @@ export default function MobileNav() {
               <ul className="grid grid-cols-2 gap-3">
                 {overigeItems.map((item) => {
                   const Icon = item.icon;
-                  const isActief = item.id === huidigId;
 
                   return (
                     <li key={item.id}>
@@ -253,16 +265,35 @@ export default function MobileNav() {
                       ) : (
                         <Link
                           href={item.href}
-                          onClick={sluit}
-                          aria-current={isActief ? "page" : undefined}
-                          className={`${menuItemKlasse} ${
-                            isActief
-                              ? "bg-tangy-blue text-white"
-                              : "bg-habico-soft-blue text-habico-navy"
+                          onClick={(event) => {
+                            event.preventDefault();
+                            navigeerViaMenu(item);
+                          }}
+                          aria-current={item.id === huidigId ? "page" : undefined}
+                          className={`${menuItemKlasse} bg-habico-soft-blue transition-colors duration-150 ${
+                            flashingId === item.id
+                              ? "text-tangy-blue"
+                              : "text-habico-navy"
                           }`}
                         >
-                          <Icon size={20} aria-hidden="true" className="shrink-0" />
-                          {item.label}
+                          <Icon
+                            size={20}
+                            aria-hidden="true"
+                            className={`shrink-0 transition-[color,filter] duration-200 ${
+                              flashingId === item.id
+                                ? "text-tangy-blue drop-shadow-[0_0_8px_rgba(29,56,255,0.95)]"
+                                : ""
+                            }`}
+                          />
+                          <span
+                            className={
+                              flashingId === item.id
+                                ? "font-extrabold text-tangy-blue drop-shadow-[0_0_8px_rgba(29,56,255,0.95)]"
+                                : ""
+                            }
+                          >
+                            {item.label}
+                          </span>
                         </Link>
                       )}
                     </li>
