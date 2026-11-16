@@ -1,12 +1,12 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Logo } from '@/components/Logo';
 
 const items = [
   { href: '/dashboard', label: 'Overzicht', icon: 'grid' },
-  { href: '/dashboard/huisgenoten', label: 'Huisgenoten', icon: 'users' },
   { href: '/dashboard/activiteiten', label: 'Activiteiten', icon: 'activity' },
   { href: '/dashboard/instellingen', label: 'Instellingen', icon: 'settings' },
   { href: '/dashboard/boodschappenlijst', label: 'Boodschappen', icon: 'shoppingcart' },
@@ -29,6 +29,13 @@ const paths: Record<string, string> = {
 
 export function Sidebar() {
   const pathname = usePathname();
+  const huisgenotenActief = pathname.startsWith('/dashboard/huisgenoten');
+  const [huisOpen, setHuisOpen] = useState(huisgenotenActief);
+  const activeIndex = items.findIndex(
+    (item) =>
+      pathname === item.href ||
+      (item.href !== '/dashboard' && pathname.startsWith(item.href)),
+  );
 
   return (
     <aside className="bg-habico-white text-ink flex w-full shrink-0 flex-col px-4 py-4 md:sticky md:top-0 md:h-screen md:w-[248px] md:px-5 md:py-7">
@@ -39,7 +46,15 @@ export function Sidebar() {
       >
         <Logo />
       </Link>
-      <div className="border-habico-white/10 bg-habico-landing mt-5 hidden items-center gap-3 rounded-xl border px-3 py-3 md:flex">
+      <button
+        type="button"
+        aria-expanded={huisOpen}
+        aria-controls="huisgenoten-menu"
+        onClick={() => setHuisOpen((open) => !open)}
+        className={`border-habico-white/10 bg-habico-landing mt-5 hidden w-full items-center gap-3 border px-3 py-3 text-left transition-colors hover:bg-habico-landing/80 md:flex ${
+          huisOpen ? 'rounded-t-xl rounded-b-none' : 'rounded-xl'
+        }`}
+      >
         <span className="bg-habico-white text-tangy-blue grid size-9 place-items-center rounded-full text-xs font-extrabold">
           <svg aria-hidden="true" className="size-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
             <path d="m3 10 9-7 9 7" />
@@ -51,19 +66,66 @@ export function Sidebar() {
           <span className="text-habico-grey block text-[10px] font-semibold tracking-[0.12em] uppercase">
             Jouw huis
           </span>
-        
         </span>
-        <span className="text-habico-white/50 ml-auto text-xs" aria-hidden="true">
+        <span
+          className={`text-habico-white/50 ml-auto text-xs transition-transform duration-300 motion-reduce:transition-none ${
+            huisOpen ? 'rotate-180' : ''
+          }`}
+          aria-hidden="true"
+        >
           ⌄
         </span>
+      </button>
+      <div
+        id="huisgenoten-menu"
+        aria-hidden={!huisOpen}
+        className={`-mt-px grid overflow-hidden transition-[grid-template-rows,opacity] duration-300 ease-out motion-reduce:transition-none ${
+          huisOpen
+            ? 'grid-rows-[1fr] opacity-100'
+            : 'pointer-events-none grid-rows-[0fr] opacity-0'
+        }`}
+      >
+        <div className="border-habico-grey bg-habico-grey/30 min-h-0 overflow-hidden rounded-b-xl border border-t-0 p-0.5">
+          <Link
+            href="/dashboard/huisgenoten"
+            aria-current={huisgenotenActief ? 'page' : undefined}
+            tabIndex={huisOpen ? 0 : -1}
+            className={`flex min-h-9 items-center gap-2 rounded-lg px-2 text-xs font-semibold transition-colors ${
+              huisgenotenActief
+                ? 'bg-habico-grey text-habico-navy shadow-sm'
+                : 'text-habico-blue/75 hover:bg-habico-grey/70 hover:text-habico-navy'
+            }`}
+          >
+            <svg
+              aria-hidden="true"
+              className="size-4 shrink-0"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d={paths.users} />
+            </svg>
+            <span>Huisgenoten</span>
+          </Link>
+        </div>
       </div>
       <p className="text-habico-white/40 mt-7 mb-2 hidden px-3 text-[10px] font-extrabold tracking-[0.18em] uppercase md:block">
         Menu
       </p>
       <nav
         aria-label="Hoofdnavigatie"
-        className="mt-4 flex gap-2 overflow-x-auto md:mt-0 md:flex-col md:overflow-visible"
+        className="relative mt-4 hidden gap-2 overflow-x-auto md:mt-0 md:flex md:flex-col md:overflow-visible"
       >
+        {activeIndex >= 0 && (
+          <span
+            aria-hidden="true"
+            className="bg-habico-soft-blue pointer-events-none absolute inset-x-0 top-0 h-12 rounded-xl shadow-sm transition-transform duration-300 ease-out motion-reduce:transition-none"
+            style={{ transform: `translateY(${activeIndex * 56}px)` }}
+          />
+        )}
         {items.map((item) => {
           const active =
             pathname === item.href ||
@@ -73,7 +135,7 @@ export function Sidebar() {
               key={item.href}
               href={item.href}
               aria-current={active ? 'page' : undefined}
-              className={`flex min-h-11 shrink-0 items-center gap-3 rounded-xl px-3 text-xs font-semibold transition-colors md:min-h-12 md:text-sm ${active ? 'bg-habico-soft-blue text-tangy-blue shadow-sm' : 'text-habico-white/65 hover:bg-habico-white/[0.07] hover:text-habico-white'}`}
+              className={`relative z-10 flex min-h-11 shrink-0 items-center gap-3 rounded-xl px-3 text-xs font-semibold transition-colors md:min-h-12 md:text-sm ${active ? 'text-tangy-blue' : 'text-habico-white/65 hover:bg-habico-white/[0.07] hover:text-habico-white'}`}
             >
               <svg
                 aria-hidden="true"
