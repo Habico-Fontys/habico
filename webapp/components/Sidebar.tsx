@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import SidebarProfielLink from '@/components/SidebarProfielLink'; // NIEUW
 import { useHuidigHuis } from '@/components/HuidigHuisBadge';
@@ -15,6 +15,7 @@ const items = [
   { href: '/dashboard/instellingen', label: 'Instellingen', icon: 'settings' },
   { href: '/dashboard/boodschappenlijst', label: 'Boodschappen', icon: 'shoppingcart' },
   { href: '/dashboard/takenlijst', label: 'Takenlijst', icon: 'listchecks' },
+  { href: '/dashboard/afval', label: 'Afval', icon: 'trash' },
 ];
 
 const paths: Record<string, string> = {
@@ -241,18 +242,26 @@ export function Sidebar() {
                 collapsed ? 'md:justify-center md:gap-0 md:px-0' : ''
               } ${active ? 'text-tangy-blue' : 'text-habico-white/65 hover:bg-habico-white/[0.07] hover:text-habico-white'}`}
             >
-              <svg
-                aria-hidden="true"
-                className={`size-4 shrink-0 ${active ? 'text-tangy-blue' : undefined}`}
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d={paths[item.icon]} />
-              </svg>
+              {item.icon === 'trash' ? (
+                <Trash2
+                  aria-hidden="true"
+                  className={`size-4 shrink-0 ${active ? 'text-tangy-blue' : undefined}`}
+                  strokeWidth={1.8}
+                />
+              ) : (
+                <svg
+                  aria-hidden="true"
+                  className={`size-4 shrink-0 ${active ? 'text-tangy-blue' : undefined}`}
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d={paths[item.icon]} />
+                </svg>
+              )}
               <span
                 className={`max-w-[160px] overflow-hidden whitespace-nowrap opacity-100 transition-[max-width,opacity] duration-300 motion-reduce:transition-none ${
                   collapsed ? 'md:max-w-0 md:opacity-0' : ''

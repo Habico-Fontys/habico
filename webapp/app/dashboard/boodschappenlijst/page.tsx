@@ -11,28 +11,13 @@ import {
   X,
 } from "lucide-react";
 import AanbiedingenBanner from "../../../components/AanbiedingenBanner";
-
-// ---------- Types ----------
-type Product = {
-  id: number;
-  naam: string;
-  omschrijving: string;
-  prijs: number;
-  aanbieding: string;
-  gekocht: boolean;
-  toegevoegdDoor: string;
-};
-
-type Bewoner = {
-  id: number;
-  naam: string;
-  betaaldBedrag: number; // 0 = nog niet betaald
-};
-
-type Voorstel = {
-  nieuwBedrag: number;
-  goedgekeurdDoor: number[];
-};
+import { useLocalStorageValue } from "@/hooks/useLocalStorageValue";
+import {
+  BEGIN_BOODSCHAPPEN_DATA,
+  BOODSCHAPPEN_OPSLAG,
+  isBoodschappenData,
+} from "./data";
+import { HUISNAAM } from "../huisgenoten/data";
 
 type Sectie = "lijst" | "budget" | "inleg" | "aanbiedingen";
 
@@ -74,19 +59,12 @@ function Avatar({ naam }: { naam: string }) {
 
 // ---------- De pagina ----------
 export default function BoodschappenlijstPage() {
-  const [producten, setProducten] = useState<Product[]>([
-    { id: 1, naam: "Toiletpapier", omschrijving: "12 rollen", prijs: 5.49, aanbieding: "", gekocht: false, toegevoegdDoor: "Marvin" },
-    { id: 2, naam: "Allesreiniger", omschrijving: "1 fles", prijs: 2.79, aanbieding: "2e halve prijs", gekocht: false, toegevoegdDoor: "Mila" },
-    { id: 3, naam: "Afwasmiddel", omschrijving: "2 flessen", prijs: 3.5, aanbieding: "", gekocht: true, toegevoegdDoor: "Marvin" },
-  ]);
-  const [bewoners, setBewoners] = useState<Bewoner[]>([
-    { id: 1, naam: "Marvin", betaaldBedrag: 35 },
-    { id: 2, naam: "Mila", betaaldBedrag: 35 },
-    { id: 3, naam: "Daan", betaaldBedrag: 0 },
-    { id: 4, naam: "Lisa", betaaldBedrag: 35 },
-  ]);
-  const [inleg, setInleg] = useState(35);
-  const [voorstel, setVoorstel] = useState<Voorstel | null>(null);
+  const [boodschappen, setBoodschappen] = useLocalStorageValue(
+    BOODSCHAPPEN_OPSLAG,
+    BEGIN_BOODSCHAPPEN_DATA,
+    isBoodschappenData,
+  );
+  const { producten, bewoners, inleg, voorstel } = boodschappen;
   const [huidigeGebruikerId, setHuidigeGebruikerId] = useState(1);
 
   // Formulier
@@ -129,18 +107,19 @@ export default function BoodschappenlijstPage() {
     e.preventDefault();
     if (naam.trim() === "") return;
 
-    setProducten([
-      ...producten,
-      {
-        id: Date.now(),
-        naam: naam.trim(),
-        omschrijving: omschrijving.trim(),
-        prijs: Number(prijsTekst) || 0,
-        aanbieding: aanbieding.trim(),
-        gekocht: false,
-        toegevoegdDoor: huidigeNaam,
-      },
-    ]);
+    const product = {
+      id: Date.now(),
+      naam: naam.trim(),
+      omschrijving: omschrijving.trim(),
+      prijs: Number(prijsTekst) || 0,
+      aanbieding: aanbieding.trim(),
+      gekocht: false,
+      toegevoegdDoor: huidigeNaam,
+    };
+    setBoodschappen((current) => ({
+      ...current,
+      producten: [...current.producten, product],
+    }));
     setNaam("");
     setOmschrijving("");
     setPrijsTekst("");
@@ -149,43 +128,68 @@ export default function BoodschappenlijstPage() {
   }
 
   function gekochtWisselen(id: number) {
-    setProducten(
-      producten.map((p) => (p.id === id ? { ...p, gekocht: !p.gekocht } : p))
-    );
+    setBoodschappen((current) => ({
+      ...current,
+      producten: current.producten.map((product) =>
+        product.id === id ? { ...product, gekocht: !product.gekocht } : product,
+      ),
+    }));
   }
 
   function productVerwijderen(id: number) {
-    setProducten(producten.filter((p) => p.id !== id));
+    setBoodschappen((current) => ({
+      ...current,
+      producten: current.producten.filter((product) => product.id !== id),
+    }));
   }
 
   // ---------- Functies: inleg en voorstel (uit vorige stap) ----------
   function inlegBetalen(id: number) {
-    setBewoners(
-      bewoners.map((b) => (b.id === id ? { ...b, betaaldBedrag: inleg } : b))
-    );
+    setBoodschappen((current) => ({
+      ...current,
+      bewoners: current.bewoners.map((bewoner) =>
+        bewoner.id === id
+          ? { ...bewoner, betaaldBedrag: current.inleg }
+          : bewoner,
+      ),
+    }));
   }
 
   function voorstelDoen(e: React.FormEvent) {
     e.preventDefault();
     const bedrag = Number(nieuwBedragTekst);
-    if (bedrag <= 0 || bedrag === inleg) return;
-    setVoorstel({ nieuwBedrag: bedrag, goedgekeurdDoor: [huidigeGebruikerId] });
+    if (!Number.isFinite(bedrag) || bedrag <= 0 || bedrag === inleg) return;
+    setBoodschappen((current) => ({
+      ...current,
+      voorstel: { nieuwBedrag: bedrag, goedgekeurdDoor: [huidigeGebruikerId] },
+    }));
     setNieuwBedragTekst("");
   }
 
   function goedkeuren() {
     if (!voorstel || ikHebGoedgekeurd) return;
-    const goedgekeurdDoor = [...voorstel.goedgekeurdDoor, huidigeGebruikerId];
-    if (goedgekeurdDoor.length === bewoners.length) {
-      setInleg(voorstel.nieuwBedrag);
-      setVoorstel(null);
-    } else {
-      setVoorstel({ ...voorstel, goedgekeurdDoor });
-    }
+    setBoodschappen((current) => {
+      if (
+        !current.voorstel ||
+        current.voorstel.goedgekeurdDoor.includes(huidigeGebruikerId)
+      ) {
+        return current;
+      }
+      const goedgekeurdDoor = [
+        ...current.voorstel.goedgekeurdDoor,
+        huidigeGebruikerId,
+      ];
+      return goedgekeurdDoor.length === current.bewoners.length
+        ? { ...current, inleg: current.voorstel.nieuwBedrag, voorstel: null }
+        : {
+            ...current,
+            voorstel: { ...current.voorstel, goedgekeurdDoor },
+          };
+    });
   }
 
   function afwijzen() {
-    setVoorstel(null);
+    setBoodschappen((current) => ({ ...current, voorstel: null }));
   }
 
   // ---------- Weergave ----------
@@ -195,7 +199,7 @@ export default function BoodschappenlijstPage() {
       <header className="flex flex-col items-stretch gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-fire-orange">
-            Maple House · Samen thuis
+            {HUISNAAM} · Samen thuis
           </p>
           <h1 className="mt-2 text-3xl font-bold text-habico-navy sm:text-4xl">
             Boodschappen<span className="text-fire-orange">.</span>

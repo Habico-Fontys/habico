@@ -3,24 +3,17 @@
 import { useMemo, useState, type FormEvent } from 'react';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
+import { useLocalStorageValue } from '@/hooks/useLocalStorageValue';
+import {
+  ACTIVITEITEN_OPSLAG,
+  BEGIN_ACTIVITEITEN,
+  isAgendaActiviteiten,
+  type ActiviteitSoort,
+  type AgendaActiviteit,
+} from './data';
+import { HUISNAAM } from '../huisgenoten/data';
 
-type ActivityType = 'Samen doen' | 'Spontaan' | 'Feestje';
-type ActivityFilter = 'Alles' | ActivityType;
-
-type AgendaActivity = {
-  id: string;
-  title: string;
-  description: string;
-  date: string;
-  time: string;
-  location: string;
-  organizer: string;
-  type: ActivityType;
-  attendees: number;
-  attending: boolean;
-  reminder: boolean;
-  noiseNotice?: string;
-};
+type ActivityFilter = 'Alles' | ActiviteitSoort;
 
 type ActivityDraft = {
   title: string;
@@ -28,70 +21,13 @@ type ActivityDraft = {
   date: string;
   time: string;
   location: string;
-  type: ActivityType;
+  type: ActiviteitSoort;
   reminder: boolean;
 };
-
-const initialActivities: AgendaActivity[] = [
-  {
-    id: 'activity-cooking',
-    title: 'Samen koken',
-    description: 'Wie kookt er mee? We maken samen iets lekkers.',
-    date: '2026-11-12',
-    time: '18:30',
-    location: 'Gedeelde keuken',
-    organizer: 'Mila',
-    type: 'Samen doen',
-    attendees: 3,
-    attending: true,
-    reminder: true,
-  },
-  {
-    id: 'activity-sports',
-    title: 'Hardlopen in het park',
-    description: 'Ik ga een rondje hardlopen. Sluit gezellig aan!',
-    date: '2026-11-12',
-    time: '19:00',
-    location: 'Verzamelen bij de voordeur',
-    organizer: 'Marvin',
-    type: 'Spontaan',
-    attendees: 1,
-    attending: false,
-    reminder: false,
-  },
-  {
-    id: 'activity-movie',
-    title: 'Filmavond',
-    description: 'Kies mee welke film we kijken en neem je favoriete snacks mee.',
-    date: '2026-11-13',
-    time: '20:00',
-    location: 'Woonkamer',
-    organizer: 'Sam',
-    type: 'Samen doen',
-    attendees: 4,
-    attending: false,
-    reminder: true,
-  },
-  {
-    id: 'activity-party',
-    title: 'Verjaardagsfeestje',
-    description: 'Een klein feestje voor mijn verjaardag. Huisgenoten zijn welkom!',
-    date: '2026-11-14',
-    time: '21:00',
-    location: 'Woonkamer',
-    organizer: 'Jonas',
-    type: 'Feestje',
-    attendees: 8,
-    attending: false,
-    reminder: false,
-    noiseNotice: 'Er kan deze avond wat extra geluid zijn. Bedankt voor je begrip!',
-  },
-];
-
-const activityTypes: ActivityType[] = ['Samen doen', 'Spontaan', 'Feestje'];
+const activityTypes: ActiviteitSoort[] = ['Samen doen', 'Spontaan', 'Feestje'];
 const filters: ActivityFilter[] = ['Alles', ...activityTypes];
 
-const typeStyles: Record<ActivityType, string> = {
+const typeStyles: Record<ActiviteitSoort, string> = {
   'Samen doen': 'bg-habico-soft-blue text-tangy-blue',
   Spontaan: 'bg-emerald-50 text-emerald-700',
   Feestje: 'bg-orange-50 text-fire-orange',
@@ -127,7 +63,11 @@ function createEmptyDraft(date = ''): ActivityDraft {
 }
 
 export default function ActivitiesPage() {
-  const [activities, setActivities] = useState(initialActivities);
+  const [activities, setActivities] = useLocalStorageValue(
+    ACTIVITEITEN_OPSLAG,
+    BEGIN_ACTIVITEITEN,
+    isAgendaActiviteiten,
+  );
   const [today, setToday] = useState('');
   const [filter, setFilter] = useState<ActivityFilter>('Alles');
   const [showForm, setShowForm] = useState(false);
@@ -176,7 +116,7 @@ export default function ActivitiesPage() {
 
   function createActivity(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const activity: AgendaActivity = {
+    const activity: AgendaActiviteit = {
       id: `activity-${Date.now()}`,
       title: draft.title.trim(),
       description: draft.description.trim() || `Georganiseerd door Marvin.`,
@@ -204,7 +144,7 @@ export default function ActivitiesPage() {
       <div className="mb-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
           <p className="text-habico-orange-red text-[10px] font-extrabold tracking-[0.2em] uppercase">
-            MAPLE HOUSE · SAMEN THUIS
+            {HUISNAAM.toUpperCase()} · SAMEN THUIS
           </p>
           <h1 className="text-habico-navy-dark mt-2 text-3xl font-extrabold">
             Activiteiten<span className="text-habico-orange">.</span>
@@ -284,7 +224,7 @@ export default function ActivitiesPage() {
               <select
                 value={draft.type}
                 onChange={(event) =>
-                  setDraft({ ...draft, type: event.target.value as ActivityType })
+                  setDraft({ ...draft, type: event.target.value as ActiviteitSoort })
                 }
                 className="border-habico-grey/80 bg-habico-white text-habico-navy-dark focus:border-tangy-blue min-h-11 rounded-xl border px-3 outline-none"
               >
