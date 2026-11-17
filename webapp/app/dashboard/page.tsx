@@ -4,6 +4,9 @@ import { DataTable } from '@/components/DataTable';
 import { DashboardChart } from '@/components/DashboardChart';
 import { StatCard } from '@/components/StatCard';
 import { dashboardStats, recentActivity, upcomingItems } from '@/data/mock';
+import { Datum } from '@/components/Datum';
+import { Voornaam } from '@/components/Voornaam';
+import { Begroeting } from '@/components/Begroeting';
 
 export default function DashboardPage() {
   return (
@@ -11,10 +14,10 @@ export default function DashboardPage() {
       <div className="mb-6 flex flex-col justify-between gap-4 sm:mb-8 sm:flex-row sm:items-end">
         <div>
           <p className="text-habico-orange-red text-[10px] font-extrabold tracking-[0.2em] uppercase">
-            MAANDAG 9 NOVEMBER 2026
+            <Datum variant="lang" />
           </p>
           <h2 className="text-habico-navy-dark mt-2 text-[26px] leading-tight font-extrabold sm:text-[32px]">
-            Goedemorgen, Marvin<span className="text-habico-orange">.</span>
+            <Begroeting />, Marvin<span className="text-habico-orange">.</span>
           </h2>
           <p className="text-habico-blue/65 mt-2 text-sm">Hier is wat er speelt in Maple House.</p>
         </div>
