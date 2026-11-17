@@ -444,20 +444,62 @@ export default function ActivitiesPage() {
                       </div>
                       <div className="mt-4 flex flex-wrap gap-2">
                         <Button
-                          className="min-h-9 rounded-lg px-3 text-xs"
+                          variant={activity.attending ? 'primary' : 'secondary'}
+                          aria-pressed={activity.attending}
+                          className={`min-h-9 rounded-lg px-3 text-xs ${
+                            activity.attending
+                              ? '!border-orange-200 !bg-orange-50 !text-fire-orange'
+                              : '!border-[#D9D9D9] !bg-[#FD7702] !text-white'
+                          }`}
                           onClick={() => toggleAttendance(activity.id)}
                         >
-                          {activity.attending ? 'Ik doe mee ✓' : 'Ik doe mee'}
+                          {activity.attending && <span aria-hidden="true">✓</span>}
+                          {activity.attending ? 'Ingeschreven' : 'Doe mee'}
                         </Button>
                         <Button
-                          variant="secondary"
+                          variant={activity.reminder ? 'primary' : 'secondary'}
                           aria-pressed={activity.reminder}
-                          className="min-h-9 rounded-lg px-3 text-xs"
+                          className={`min-h-9 rounded-lg px-3 text-xs transition-all duration-200 ${
+                            activity.reminder
+                              ? '!border-[#cbd2ff] !bg-habico-soft-blue !text-tangy-blue'
+                              : '!border-[#1D38FF] !bg-[#1D38FF] !text-white'
+                          }`}
                           onClick={() => toggleReminder(activity.id)}
                         >
-                          {activity.reminder ? 'Herinnering aan ✓' : 'Herinner mij'}
+                          {activity.reminder && <span aria-hidden="true">✓</span>}
+                          {activity.reminder ? 'Herinnering ingesteld' : 'Herinner mij'}
                         </Button>
                       </div>
+                      {(activity.attending || activity.reminder) && (
+                        <div
+                          role="status"
+                          aria-live="polite"
+                          className="mt-3 flex flex-wrap gap-2"
+                        >
+                          {activity.attending && (
+                            <span className="inline-flex items-center gap-1.5 rounded-full border border-orange-200 bg-orange-50 px-2.5 py-1.5 text-[11px] font-semibold text-orange-800">
+                              <span
+                                aria-hidden="true"
+                                className="grid size-4 place-items-center rounded-full bg-fire-orange text-[10px] text-white"
+                              >
+                                ✓
+                              </span>
+                              Je bent ingeschreven
+                            </span>
+                          )}
+                          {activity.reminder && (
+                            <span className="inline-flex items-center gap-1.5 rounded-full border border-[#cbd2ff] bg-habico-soft-blue px-2.5 py-1.5 text-[11px] font-semibold text-tangy-blue">
+                              <span
+                                aria-hidden="true"
+                                className="grid size-4 place-items-center rounded-full bg-tangy-blue text-[10px] text-white"
+                              >
+                                ✓
+                              </span>
+                              Herinnering staat aan
+                            </span>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </article>
                 ))
