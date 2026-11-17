@@ -393,8 +393,8 @@ export default function ActivitiesPage() {
                           }`}
                           onClick={() => toggleAttendance(activity.id)}
                         >
-                          {activity.attending && <span aria-hidden="true">✓</span>}
-                          {activity.attending ? 'Ingeschreven' : 'Doe mee'}
+                         
+                          {activity.attending ? 'Uitschrijven' : 'Doe mee'}
                         </Button>
                         <Button
                           variant={activity.reminder ? 'primary' : 'secondary'}
@@ -406,8 +406,8 @@ export default function ActivitiesPage() {
                           }`}
                           onClick={() => toggleReminder(activity.id)}
                         >
-                          {activity.reminder && <span aria-hidden="true">✓</span>}
-                          {activity.reminder ? 'Herinnering ingesteld' : 'Herinner mij'}
+                          
+                          {activity.reminder ? 'Herinnering uitschakelen' : 'Herinner mij'}
                         </Button>
                       </div>
                       {(activity.attending || activity.reminder) && (
