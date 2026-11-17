@@ -9,6 +9,7 @@ const pageTitles: Record<string, string> = {
   '/dashboard/activiteiten': 'Activiteiten',
   '/dashboard/boodschappenlijst': 'Boodschappen',
   '/dashboard/instellingen': 'Instellingen',
+  '/dashboard/takenlijst': 'Takenlijst',
 };
 
 export function Topbar() {
@@ -17,9 +18,8 @@ export function Topbar() {
   const title = pageTitles[pathname] ?? 'Dashboard';
 
   return (
-    <header className="flex min-h-[76px] items-center justify-between gap-4 border-b border-habico-grey/70 bg-habico-landing/90 px-4 sm:px-7 lg:px-10">
+    <header className="flex min-h-[76px] items-center justify-between gap-4 bg-habico-landing/90 px-4 sm:px-7 lg:px-10">
       <div className="min-w-0">
-        <h1 className="truncate text-lg font-semibold text-habico-navy">{title}</h1>
       </div>
       <div className="flex shrink-0 items-center gap-2 sm:gap-4">
         <span className="bg-habico-blue/5 text-habico-blue hidden items-center gap-2 rounded-full px-3 py-2 text-[11px] font-semibold sm:inline-flex">

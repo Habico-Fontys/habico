@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import Image from 'next/image';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 
 
@@ -37,6 +39,7 @@ export function Sidebar() {
   const pathname = usePathname();
   const huisgenotenActief = pathname.startsWith('/dashboard/huisgenoten');
   const [huisOpen, setHuisOpen] = useState(huisgenotenActief);
+  const [collapsed, setCollapsed] = useState(false);
   const activeIndex = items.findIndex(
     (item) =>
       pathname === item.href ||
@@ -44,22 +47,63 @@ export function Sidebar() {
   );
 
   return (
-    <aside className="bg-habico-white text-ink flex w-full shrink-0 flex-col px-4 py-4 md:sticky md:top-0 md:h-screen md:w-[248px] md:px-5 md:py-7">
-      <Link
-        href="/dashboard"
-        aria-label="Habico dashboard"
-        className="flex w-fit items-center px-1 md:px-2"
+    <aside
+      className={`bg-habico-white text-ink flex w-full shrink-0 flex-col px-4 py-4 transition-[width] duration-300 ease-in-out motion-reduce:transition-none md:sticky md:top-0 md:h-screen md:py-7 ${
+        collapsed ? 'md:w-[76px] md:px-3' : 'md:w-[248px] md:px-5'
+      }`}
+    >
+      <div
+        className={`flex min-h-[52px] items-center justify-between transition-[min-height] duration-300 motion-reduce:transition-none ${
+          collapsed ? 'md:min-h-[104px] md:flex-col md:items-end md:justify-start md:gap-2' : ''
+        }`}
       >
-        <Logo />
-      </Link>
+        <Link
+          href="/dashboard"
+          aria-label="Habico dashboard"
+          className={`flex h-[52px] w-[154px] items-center overflow-hidden ${
+            collapsed ? 'md:order-2 md:w-[52px] md:justify-center md:self-center' : 'md:order-1'
+          }`}
+        >
+          {collapsed ? (
+            <>
+              <span className="block md:hidden">
+                <Logo />
+              </span>
+              <Image
+                src="/brand/Habico_Logo_Icon.svg"
+                alt=""
+                width={48}
+                height={51}
+                className="hidden h-12 w-auto object-contain md:block"
+              />
+            </>
+          ) : (
+            <Logo />
+          )}
+        </Link>
+        <button
+          type="button"
+          aria-label={collapsed ? 'Zijbalk uitklappen' : 'Zijbalk inklappen'}
+          aria-expanded={!collapsed}
+          aria-controls="hoofdnavigatie"
+          title={collapsed ? 'Zijbalk uitklappen' : 'Zijbalk inklappen'}
+          onClick={() => setCollapsed((isCollapsed) => !isCollapsed)}
+          className={`hidden size-10 shrink-0 place-items-center bg-transparent text-habico-grey transition-colors hover:text-habico-blue focus-visible:outline-tangy-blue focus-visible:outline-2 focus-visible:outline-offset-2 md:grid ${
+            collapsed ? 'md:order-1' : 'md:order-2'
+          }`}
+        >
+          {collapsed ? <ChevronRight size={22} /> : <ChevronLeft size={22} />}
+        </button>
+      </div>
       <button
         type="button"
+        title="Maple House — huisgenotenmenu"
         aria-expanded={huisOpen}
         aria-controls="huisgenoten-menu"
         onClick={() => setHuisOpen((open) => !open)}
-        className={`border-habico-white/10 bg-habico-landing mt-5 hidden w-full items-center gap-3 border px-3 py-3 text-left transition-colors hover:bg-habico-landing/80 md:flex ${
-          huisOpen ? 'rounded-t-xl rounded-b-none' : 'rounded-xl'
-        }`}
+        className={`border-habico-white/10 bg-habico-landing mt-5 hidden w-full items-center border py-3 text-left transition-all duration-300 hover:bg-habico-landing/80 motion-reduce:transition-none md:flex ${
+          collapsed ? 'justify-center px-0' : 'gap-3 px-3'
+        } ${huisOpen ? 'rounded-t-xl rounded-b-none' : 'rounded-xl'}`}
       >
         <span className="bg-habico-white text-tangy-blue grid size-9 place-items-center rounded-full text-xs font-extrabold">
           <svg aria-hidden="true" className="size-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -67,20 +111,26 @@ export function Sidebar() {
             <path d="M5.5 9v11h13V9M9.5 20v-6h5v6" />
           </svg>
         </span>
-        <span className="min-w-0">
+        <span
+          className={`min-w-0 overflow-hidden whitespace-nowrap opacity-100 transition-[max-width,opacity] duration-300 motion-reduce:transition-none ${
+            collapsed ? 'md:max-w-0 md:opacity-0' : 'md:max-w-40'
+          }`}
+        >
           <span className="mt-0.5 block truncate text-sm font-bold">Maple House</span>
           <span className="text-habico-grey block text-[10px] font-semibold tracking-[0.12em] uppercase">
             Jouw huis
           </span>
         </span>
-        <span
-          className={`text-habico-white/50 ml-auto text-xs transition-transform duration-300 motion-reduce:transition-none ${
-            huisOpen ? 'rotate-180' : ''
-          }`}
-          aria-hidden="true"
-        >
-          ⌄
-        </span>
+        {!collapsed && (
+          <span
+            className={`text-habico-white/50 ml-auto text-xs transition-transform duration-300 motion-reduce:transition-none ${
+              huisOpen ? 'rotate-180' : ''
+            }`}
+            aria-hidden="true"
+          >
+            ⌄
+          </span>
+        )}
       </button>
       <div
         id="huisgenoten-menu"
@@ -96,7 +146,10 @@ export function Sidebar() {
             href="/dashboard/huisgenoten"
             aria-current={huisgenotenActief ? 'page' : undefined}
             tabIndex={huisOpen ? 0 : -1}
-            className={`flex min-h-9 items-center gap-2 rounded-lg px-2 text-xs font-semibold transition-colors ${
+            title="Huisgenoten"
+            className={`flex min-h-9 items-center rounded-lg px-2 text-xs font-semibold transition-colors ${
+              collapsed ? 'justify-center gap-0 md:px-0' : 'gap-2'
+            } ${
               huisgenotenActief
                 ? 'bg-habico-grey text-habico-navy shadow-sm'
                 : 'text-habico-blue/75 hover:bg-habico-grey/70 hover:text-habico-navy'
@@ -114,16 +167,27 @@ export function Sidebar() {
             >
               <path d={paths.users} />
             </svg>
-            <span>Huisgenoten</span>
+            <span
+              className={`max-w-40 overflow-hidden whitespace-nowrap opacity-100 transition-[max-width,opacity] duration-300 motion-reduce:transition-none ${
+                collapsed ? 'md:max-w-0 md:opacity-0' : ''
+              }`}
+            >
+              Huisgenoten
+            </span>
           </Link>
         </div>
       </div>
-      <p className="text-habico-white/40 mt-7 mb-2 hidden px-3 text-[10px] font-extrabold tracking-[0.18em] uppercase md:block">
-        Menu
-      </p>
+      {!collapsed && (
+        <p className="text-habico-white/40 mt-7 mb-2 hidden px-3 text-[10px] font-extrabold tracking-[0.18em] uppercase md:block">
+          Menu
+        </p>
+      )}
       <nav
         aria-label="Hoofdnavigatie"
-        className="relative mt-4 hidden gap-2 overflow-x-auto md:mt-0 md:flex md:flex-col md:overflow-visible"
+        id="hoofdnavigatie"
+        className={`relative mt-4 hidden gap-2 overflow-x-auto md:flex md:flex-col md:overflow-visible ${
+          collapsed ? 'md:mt-7' : 'md:mt-0'
+        }`}
       >
         {activeIndex >= 0 && (
           <span
@@ -141,7 +205,10 @@ export function Sidebar() {
               key={item.href}
               href={item.href}
               aria-current={active ? 'page' : undefined}
-              className={`relative z-10 flex min-h-11 shrink-0 items-center gap-3 rounded-xl px-3 text-xs font-semibold transition-colors md:min-h-12 md:text-sm ${active ? 'text-tangy-blue' : 'text-habico-white/65 hover:bg-habico-white/[0.07] hover:text-habico-white'}`}
+              title={item.label}
+              className={`relative z-10 flex min-h-11 shrink-0 items-center gap-3 rounded-xl px-3 text-xs font-semibold transition-colors md:min-h-12 md:text-sm ${
+                collapsed ? 'md:justify-center md:gap-0 md:px-0' : ''
+              } ${active ? 'text-tangy-blue' : 'text-habico-white/65 hover:bg-habico-white/[0.07] hover:text-habico-white'}`}
             >
               <svg
                 aria-hidden="true"
@@ -155,18 +222,28 @@ export function Sidebar() {
               >
                 <path d={paths[item.icon]} />
               </svg>
-              <span className={active ? 'text-tangy-blue' : 'text-habico-blue/70'}>
+              <span
+                className={`max-w-[160px] overflow-hidden whitespace-nowrap opacity-100 transition-[max-width,opacity] duration-300 motion-reduce:transition-none ${
+                  collapsed ? 'md:max-w-0 md:opacity-0' : ''
+                } ${active ? 'text-tangy-blue' : 'text-habico-blue/70'}`}
+              >
                 {item.label}
               </span>
               {active && (
-                <span className="bg-habico-orange ml-auto hidden h-5 w-1 rounded-full md:block" />
+                <span className="bg-habico-orange absolute top-1/2 right-0 hidden h-5 w-1 -translate-y-1/2 rounded-full md:block" />
               )}
             </Link>
           );
         })}
       </nav>
-      
-      <div className="from-habico-blue to-tangy-blue relative mt-5 hidden overflow-hidden rounded-2xl bg-gradient-to-br p-4 md:mt-auto md:block">
+
+      <div
+        className={`from-habico-blue to-tangy-blue relative mt-5 hidden overflow-hidden rounded-2xl bg-gradient-to-br p-4 transition-[max-height,opacity,margin,padding] duration-300 motion-reduce:transition-none md:block ${
+          collapsed
+            ? 'md:mt-0 md:max-h-0 md:p-0 md:opacity-0'
+            : 'md:mt-auto md:max-h-64 md:opacity-100'
+        }`}
+      >
         <div
           aria-hidden="true"
           className="bg-habico-orange absolute -top-16 -left-12 size-40 rounded-full"
@@ -181,7 +258,13 @@ export function Sidebar() {
           </p>
         </div>
       </div>
-      <div className="border-habico-white/10 mt-4 hidden items-center gap-3 border-t pt-5 md:flex">
+      <div
+        className={`border-habico-white/10 mt-4 hidden items-center gap-3 border-t pt-5 transition-[max-height,opacity,margin,padding] duration-300 motion-reduce:transition-none md:flex ${
+          collapsed
+            ? 'md:mt-0 md:max-h-0 md:overflow-hidden md:border-t-0 md:pt-0 md:opacity-0'
+            : 'md:max-h-20 md:opacity-100'
+        }`}
+      >
         <span className="bg-habico-orange/20 text-habico-orange grid size-9 place-items-center rounded-full text-xs font-bold">
           AD
         </span>

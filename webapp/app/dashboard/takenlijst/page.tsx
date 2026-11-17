@@ -191,11 +191,43 @@ function geldigeRegistratie(waarde: unknown): waarde is Registratie {
 function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
     <section
-      className={`rounded-3xl border border-[#e3e2e0] bg-[#fcfaf7] p-5 sm:p-7 ${className}`}
+      className={`rounded-3xl border border-[#e3e2e0] bg-[#fcfaf7] p-5 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg motion-reduce:translate-y-0 motion-reduce:transition-none sm:p-7 ${className}`}
     >
       {children}
     </section>
   );
+}
+
+function AnimatedNumber({ value }: { value: number }) {
+  const [displayValue, setDisplayValue] = useState(0);
+  const currentValue = useRef(0);
+
+  useEffect(() => {
+    const from = currentValue.current;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const start = performance.now();
+    const duration = 700;
+    let frame = 0;
+    const animate = (now: number) => {
+      if (reducedMotion) {
+        currentValue.current = value;
+        setDisplayValue(value);
+        return;
+      }
+
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - (1 - progress) ** 3;
+      const nextValue = Math.round(from + (value - from) * eased);
+      currentValue.current = nextValue;
+      setDisplayValue(nextValue);
+      if (progress < 1) frame = requestAnimationFrame(animate);
+    };
+
+    frame = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frame);
+  }, [value]);
+
+  return <>{displayValue}</>;
 }
 
 // ---------- 5. De pagina en haar instellingen ----------
@@ -269,7 +301,7 @@ export default function TakenlijstPage() {
   const resterend = Math.max(0, weekDoel - totaal);
   const percentage = Math.round((totaal / weekDoel) * 100);
 
-  // Zet minuten om naar de lengte van de twee blauwe cirkelsegmenten.
+  // Zet minuten om naar de lengte van de twee categoriegekleurde cirkelsegmenten.
   // Bij meer minuten dan het weekdoel blijft de cirkel maximaal gevuld.
   const omtrek = 2 * Math.PI * 84;
   const schaal = Math.max(weekDoel, totaal, 1);
@@ -378,11 +410,21 @@ export default function TakenlijstPage() {
             Samen zorgen we voor een fijn huis. Vul in wat je deze week hebt gedaan.
           </p>
           <p className="mt-6">
-            <strong className="text-4xl tracking-tight">{totaal}</strong>
-            <span className="ml-2 text-sm text-[#6687b0]">van {weekDoel} min</span>
+            <strong className="text-4xl tracking-tight">
+              <AnimatedNumber value={totaal} />
+            </strong>
+            <span className="ml-2 text-sm text-[#6687b0]">
+              van <AnimatedNumber value={weekDoel} /> min
+            </span>
           </p>
           <p className="mt-2 text-sm font-semibold text-[#FD7702]">
-            {resterend > 0 ? `${resterend} minuten samen te gaan` : 'Weekdoel behaald!'}
+            {resterend > 0 ? (
+              <>
+                <AnimatedNumber value={resterend} /> minuten samen te gaan
+              </>
+            ) : (
+              'Weekdoel behaald!'
+            )}
           </p>
         </div>
         {/* Legenda links van het cirkeldiagram. */}
@@ -390,7 +432,7 @@ export default function TakenlijstPage() {
           <div className="flex shrink-0 flex-col gap-5 text-xs">
             {[
               { naam: 'Schoonmaak', min: schoonmaak, kleur: '#1D38FF' },
-              { naam: 'Huishoudelijk', min: huishoudelijk, kleur: '#7f91ff' },
+              { naam: 'Huishoudelijk', min: huishoudelijk, kleur: '#FD7702' },
               { naam: 'Resterend', min: resterend, kleur: '#dedfe3' },
             ].map((item) => (
               <div key={item.naam}>
@@ -398,11 +440,13 @@ export default function TakenlijstPage() {
                   <span className="size-2 rounded-full" style={{ background: item.kleur }} />
                   {item.naam}
                 </span>
-                <strong className="mt-1 ml-4 block text-base">{item.min} min</strong>
+                <strong className="mt-1 ml-4 block text-base">
+                  <AnimatedNumber value={item.min} /> min
+                </strong>
               </div>
             ))}
           </div>
-          {/* Grijze basisring met twee blauwe segmenten voor de minuten. */}
+          {/* Grijze basisring met een segment per categorie. */}
           <div className="relative w-full max-w-[290px] min-w-0">
             <svg
               viewBox="0 0 240 240"
@@ -426,7 +470,7 @@ export default function TakenlijstPage() {
                 cy="120"
                 r="84"
                 fill="none"
-                stroke="#7f91ff"
+                stroke="#FD7702"
                 strokeWidth="24"
                 strokeDasharray={`${segment2} ${omtrek}`}
                 strokeDashoffset={-segment1}
@@ -437,7 +481,9 @@ export default function TakenlijstPage() {
               aria-hidden="true"
               className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center"
             >
-              <strong className="text-4xl font-bold">{percentage}%</strong>
+              <strong className="text-4xl font-bold">
+                <AnimatedNumber value={percentage} />%
+              </strong>
               <span className="mt-2 text-xs text-[#6687b0]">van jullie weekdoel</span>
             </div>
           </div>
@@ -465,7 +511,7 @@ export default function TakenlijstPage() {
                         <Bell size={14} className="text-[#FD7702]" />
                       </span>
                     )}
-                    {b.minuten} min
+                    <AnimatedNumber value={b.minuten} /> min
                   </span>
                 </div>
                 <div className="h-1.5 overflow-hidden rounded-full bg-[#e9eaff]">
@@ -487,7 +533,15 @@ export default function TakenlijstPage() {
             key={id}
             onClick={() => setCategorie(id)}
             aria-pressed={categorie === id}
-            className={`flex min-h-24 items-center gap-4 rounded-2xl border p-5 text-left transition duration-300 motion-reduce:transition-none ${categorie === id ? 'border-[#1D38FF] bg-[#1D38FF] text-white shadow-lg shadow-[#1D38FF]/10' : 'border-[#e3e2e0] bg-[#fcfaf7] hover:border-[#1D38FF]/40'}`}
+            className={`flex min-h-24 items-center gap-4 rounded-2xl border p-5 text-left shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg motion-reduce:translate-y-0 motion-reduce:transition-none ${
+              categorie === id
+                ? id === 'schoonmaak'
+                  ? 'border-[#1D38FF] bg-[#1D38FF] text-white shadow-lg shadow-[#1D38FF]/10'
+                  : 'border-[#FD7702] bg-[#FD7702] text-white shadow-lg shadow-[#FD7702]/15'
+                : id === 'schoonmaak'
+                  ? 'border-[#e3e2e0] bg-[#fcfaf7] hover:border-[#1D38FF]/40'
+                  : 'border-[#e3e2e0] bg-[#fcfaf7] hover:border-[#FD7702]/40'
+            }`}
           >
             <Icon size={23} className="shrink-0" />
             <span className="flex-1">
@@ -495,10 +549,12 @@ export default function TakenlijstPage() {
               <span
                 className={`mt-1 block text-xs ${categorie === id ? 'text-white/75' : 'text-[#6687b0]'}`}
               >
-                {gedaan(id)} van {doel(id)} min
+                <AnimatedNumber value={gedaan(id)} /> van <AnimatedNumber value={doel(id)} /> min
               </span>
             </span>
-            <strong className="text-lg">{Math.round((gedaan(id) / doel(id)) * 100)}%</strong>
+            <strong className="text-lg">
+              <AnimatedNumber value={Math.round((gedaan(id) / doel(id)) * 100)} />%
+            </strong>
           </button>
         ))}
       </div>
@@ -592,7 +648,7 @@ export default function TakenlijstPage() {
                         key={taak.id}
                         onClick={() => openen(dag, taak)}
                         title="Uitgevoerde taak registreren"
-                        className="w-full rounded-xl border border-[#FD7702]/15 bg-[#fff0df] p-3 text-left transition hover:-translate-y-0.5 hover:shadow-sm focus-visible:outline-[#1D38FF] motion-reduce:transform-none"
+                        className="w-full rounded-xl border border-[#FD7702]/15 bg-[#fff0df] p-3 text-left shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-[#1D38FF] motion-reduce:translate-y-0 motion-reduce:transition-none"
                       >
                         <strong className="block text-xs leading-5">{taak.naam}</strong>
                         <span className="mt-2 flex items-center gap-1 text-[11px] text-[#a46a2d]">
@@ -607,7 +663,7 @@ export default function TakenlijstPage() {
                     ))}
                 </div>
               ))}
-              {/* Blauwe kaarten: geregistreerde bijdragen per dag. */}
+              {/* Gekleurde kaarten: geregistreerde bijdragen per dag. */}
               <div className="px-2 py-4 text-[10px] font-semibold text-[#6687b0]">Gedaan</div>
               {dagen.map((dag) => (
                 <div
@@ -623,12 +679,21 @@ export default function TakenlijstPage() {
                           setFormulier(null);
                           setDetail(r);
                         }}
-                        className="w-full rounded-xl bg-[#e9eaff] p-3 text-left transition hover:bg-[#dfe2ff] focus-visible:outline-[#1D38FF]"
+                        className={`w-full rounded-xl border p-3 text-left shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md motion-reduce:translate-y-0 motion-reduce:transition-none ${
+                          r.categorie === 'schoonmaak'
+                            ? 'border-[#1D38FF]/10 bg-[#e9eaff] hover:bg-[#dfe2ff] focus-visible:outline-[#1D38FF]'
+                            : 'border-[#FD7702]/15 bg-[#fff0df] hover:bg-[#ffe6c9] focus-visible:outline-[#FD7702]'
+                        }`}
                       >
-                        <Check size={14} className="mb-2 text-[#1D38FF]" />
+                        <Check
+                          size={14}
+                          className={`mb-2 ${r.categorie === 'schoonmaak' ? 'text-[#1D38FF]' : 'text-[#FD7702]'}`}
+                        />
                         <strong className="block text-xs leading-5">{r.naam}</strong>
-                        <span className="mt-2 block text-[11px] text-[#1D38FF]">
-                          {r.minuten} min · {r.bewoner}
+                        <span
+                          className={`mt-2 block text-[11px] ${r.categorie === 'schoonmaak' ? 'text-[#1D38FF]' : 'text-[#bc5500]'}`}
+                        >
+                          <AnimatedNumber value={r.minuten} /> min · {r.bewoner}
                         </span>
                       </button>
                     ))}
@@ -657,7 +722,7 @@ export default function TakenlijstPage() {
           className="order-1 mt-4 grid auto-rows-fr grid-cols-2 items-stretch gap-3 pb-6 sm:hidden"
         >
           {/* Linksboven: het gezamenlijke weekdoel in minuten. */}
-          <div className="min-w-0 rounded-[28px] bg-[#fcfaf7] p-4">
+          <div className="min-w-0 rounded-[28px] bg-[#fcfaf7] p-4 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg motion-reduce:translate-y-0 motion-reduce:transition-none">
             <h2 className="text-sm leading-5 font-semibold">Jullie weekdoel</h2>
             <div className="relative mx-auto mt-2 w-full max-w-28">
               <svg
@@ -682,7 +747,7 @@ export default function TakenlijstPage() {
                   cy="120"
                   r="84"
                   fill="none"
-                  stroke="#7f91ff"
+                  stroke="#FD7702"
                   strokeWidth="22"
                   strokeDasharray={`${segment2} ${omtrek}`}
                   strokeDashoffset={-segment1}
@@ -690,11 +755,16 @@ export default function TakenlijstPage() {
                 />
               </svg>
               <div aria-hidden="true" className="absolute inset-0 flex items-center justify-center">
-                <strong className="text-2xl">{percentage}%</strong>
+                <strong className="text-2xl">
+                  <AnimatedNumber value={percentage} />%
+                </strong>
               </div>
             </div>
             <p className="text-center text-xs leading-5 text-[#6687b0]">
-              <strong className="text-[#032747]">{totaal}</strong> van {weekDoel} min
+              <strong className="text-[#032747]">
+                <AnimatedNumber value={totaal} />
+              </strong>{' '}
+              van <AnimatedNumber value={weekDoel} /> min
             </p>
           </div>
 
@@ -706,7 +776,7 @@ export default function TakenlijstPage() {
               type="button"
               aria-pressed={categorie === id}
               onClick={() => setCategorie(id)}
-              className={`relative flex min-h-52 min-w-0 flex-col items-start rounded-[28px] p-4 text-left text-white transition duration-300 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#032747] motion-reduce:transition-none ${
+              className={`relative flex min-h-52 min-w-0 flex-col items-start rounded-[28px] p-4 text-left text-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl active:scale-[0.98] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#032747] motion-reduce:translate-y-0 motion-reduce:scale-100 motion-reduce:transition-none ${
                 id === 'schoonmaak' ? 'bg-[#1D38FF]' : 'bg-[#FD7702]'
               }`}
             >
@@ -718,16 +788,16 @@ export default function TakenlijstPage() {
               )}
               <Icon size={52} strokeWidth={1.5} aria-hidden="true" className="my-5 self-center" />
               <span className="mt-auto text-xs leading-5 text-white/90">
-                {gedaan(id)} van {doel(id)} min
+                <AnimatedNumber value={gedaan(id)} /> van <AnimatedNumber value={doel(id)} /> min
               </span>
               <span className="text-xs font-semibold">
-                {Math.max(0, doel(id) - gedaan(id))} min te gaan
+                <AnimatedNumber value={Math.max(0, doel(id) - gedaan(id))} /> min te gaan
               </span>
             </button>
           ))}
 
           {/* Rechtsonder: compacte bijdragen met een belletje bij nul minuten. */}
-          <div className="min-w-0 rounded-[28px] bg-[#fcfaf7] p-3">
+          <div className="min-w-0 rounded-[28px] bg-[#fcfaf7] p-3 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg motion-reduce:translate-y-0 motion-reduce:transition-none">
             <h2 className="mb-2 text-sm leading-5 font-semibold">Eerlijk verdeeld</h2>
             <div className="space-y-1">
               {bewonersMinuten.map((bewoner) => (
@@ -743,7 +813,7 @@ export default function TakenlijstPage() {
                           <Bell size={11} className="text-[#FD7702]" />
                         </span>
                       )}
-                      {bewoner.minuten} min
+                      <AnimatedNumber value={bewoner.minuten} /> min
                     </span>
                   </div>
                   <div className="h-1 overflow-hidden rounded-full bg-[#e9eaff]">
