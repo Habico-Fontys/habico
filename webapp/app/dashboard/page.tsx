@@ -17,7 +17,8 @@ export default function DashboardPage() {
             <Datum variant="lang" />
           </p>
           <h2 className="text-habico-navy-dark mt-2 text-[26px] leading-tight font-extrabold sm:text-[32px]">
-            <Begroeting />, Marvin<span className="text-habico-orange">.</span>
+            <Begroeting />, <Voornaam />
+            <span className="text-habico-orange">.</span>
           </h2>
           <p className="text-habico-blue/65 mt-2 text-sm">Hier is wat er speelt in Maple House.</p>
         </div>
