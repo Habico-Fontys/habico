@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import SidebarProfielLink from '@/components/SidebarProfielLink'; // NIEUW
+import { useHuidigHuis } from '@/components/HuidigHuisBadge';
 
 const items = [
   { href: '/dashboard', label: 'Overzicht', icon: 'grid' },
@@ -31,7 +32,9 @@ const paths: Record<string, string> = {
 
 export function Sidebar() {
   const pathname = usePathname();
+  const currentHouse = useHuidigHuis();
   const huisgenotenActief = pathname.startsWith('/dashboard/huisgenoten');
+  const huisgenotenPaginaActief = pathname === '/dashboard/huisgenoten';
   const [huisOpen, setHuisOpen] = useState(huisgenotenActief);
   const [collapsed, setCollapsed] = useState(false);
   const activeIndex = items.findIndex(
@@ -91,7 +94,7 @@ export function Sidebar() {
       </div>
       <button
         type="button"
-        title="Maple House — huisgenotenmenu"
+        title={`${currentHouse.name} — huisgenotenmenu`}
         aria-expanded={huisOpen}
         aria-controls="huisgenoten-menu"
         onClick={() => setHuisOpen((open) => !open)}
@@ -110,7 +113,7 @@ export function Sidebar() {
             collapsed ? 'md:max-w-0 md:opacity-0' : 'md:max-w-40'
           }`}
         >
-          <span className="mt-0.5 block truncate text-sm font-bold">Maple House</span>
+          <span className="mt-0.5 block truncate text-sm font-bold">{currentHouse.name}</span>
           <span className="text-habico-grey block text-[10px] font-semibold tracking-[0.12em] uppercase">
             Jouw huis
           </span>
@@ -138,13 +141,13 @@ export function Sidebar() {
         <div className="border-habico-grey bg-habico-grey/30 min-h-0 overflow-hidden rounded-b-xl border border-t-0 p-0.5">
           <Link
             href="/dashboard/huisgenoten"
-            aria-current={huisgenotenActief ? 'page' : undefined}
+            aria-current={huisgenotenPaginaActief ? 'page' : undefined}
             tabIndex={huisOpen ? 0 : -1}
             title="Huisgenoten"
             className={`flex min-h-9 items-center rounded-lg px-2 text-xs font-semibold transition-colors ${
               collapsed ? 'justify-center gap-0 md:px-0' : 'gap-2'
             } ${
-              huisgenotenActief
+              huisgenotenPaginaActief
                 ? 'bg-habico-grey text-habico-navy shadow-sm'
                 : 'text-habico-blue/75 hover:bg-habico-grey/70 hover:text-habico-navy'
             }`}
@@ -167,6 +170,40 @@ export function Sidebar() {
               }`}
             >
               Huisgenoten
+            </span>
+          </Link>
+          <Link
+            href="/dashboard/huisgenoten/wisselen"
+            aria-current={pathname === '/dashboard/huisgenoten/wisselen' ? 'page' : undefined}
+            tabIndex={huisOpen ? 0 : -1}
+            title="Van huis wisselen"
+            className={`flex min-h-9 items-center rounded-lg px-2 text-xs font-semibold transition-colors ${
+              collapsed ? 'justify-center gap-0 md:px-0' : 'gap-2'
+            } ${
+              pathname === '/dashboard/huisgenoten/wisselen'
+                ? 'bg-habico-grey text-habico-navy shadow-sm'
+                : 'text-habico-blue/75 hover:bg-habico-grey/70 hover:text-habico-navy'
+            }`}
+          >
+            <svg
+              aria-hidden="true"
+              className="size-4 shrink-0"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M7 7h11l-3-3M17 17H6l3 3" />
+              <path d="M18 7a6 6 0 0 1 1 3M6 17a6 6 0 0 1-1-3" />
+            </svg>
+            <span
+              className={`max-w-40 overflow-hidden whitespace-nowrap opacity-100 transition-[max-width,opacity] duration-300 motion-reduce:transition-none ${
+                collapsed ? 'md:max-w-0 md:opacity-0' : ''
+              }`}
+            >
+              Van huis wisselen
             </span>
           </Link>
         </div>

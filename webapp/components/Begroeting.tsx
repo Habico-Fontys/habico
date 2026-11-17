@@ -10,7 +10,7 @@ export function Begroeting() {
     const hour = new Date().getHours();
 
     if (hour >= 5 && hour < 12) {
-      setGreeting('Goedemorgen');
+      setGreeting('Goedemorgen'); 
     } else if (hour >= 12 && hour < 18) {
       setGreeting('Goedemiddag');
     } else if (hour >= 18 && hour < 23) {
