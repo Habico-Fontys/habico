@@ -7,6 +7,7 @@ import { dashboardStats, recentActivity, upcomingItems } from '@/data/mock';
 import { Datum } from '@/components/Datum';
 import { Voornaam } from '@/components/Voornaam';
 import { Begroeting } from '@/components/Begroeting';
+import { HuidigHuisBadge } from '@/components/HuidigHuisBadge';
 
 export default function DashboardPage() {
   return (
@@ -20,11 +21,9 @@ export default function DashboardPage() {
             <Begroeting />, <Voornaam />
             <span className="text-habico-orange">.</span>
           </h2>
-          <p className="text-habico-blue/65 mt-2 text-sm">Hier is wat er speelt in Maple House.</p>
+          <p className="text-habico-blue/65 mt-2 text-sm">Hier is wat er speelt in jouw huis.</p>
         </div>
-        <div className="border-habico-grey/80 bg-habico-white text-habico-blue/70 inline-flex w-fit items-center gap-2 rounded-full border px-3 py-2 text-[10px] font-semibold">
-          <span className="bg-habico-orange size-2 rounded-full" /> Alles loopt lekker
-        </div>
+        <HuidigHuisBadge />
       </div>
       <section
         aria-label="Kerncijfers"
