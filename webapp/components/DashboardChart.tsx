@@ -1,13 +1,26 @@
+'use client';
+
+import { useState } from 'react';
 import { chartLabels, chartValues } from '@/data/mock';
 import { Card } from '@/components/Card';
 
+const chartPoint = (value: number, index: number) => ({
+  x: 24 + index * 64,
+  y: 172 - value * 1.4,
+});
+
 const points = chartValues
-  .map((value, index) => `${24 + index * 64},${172 - value * 1.4}`)
+  .map((value, index) => {
+    const point = chartPoint(value, index);
+    return `${point.x},${point.y}`;
+  })
   .join(' ');
 
 export function DashboardChart() {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
   return (
-    <Card className="min-w-0">
+    <Card className="min-w-0 transition-shadow duration-300 hover:shadow-[0_14px_32px_rgba(0,35,71,0.1)]">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-habico-blue/55 text-xs font-normal tracking-[0.12em] uppercase">
@@ -56,18 +69,65 @@ export function DashboardChart() {
             strokeLinejoin="round"
           />
           {chartValues.map((value, index) => (
-            <circle
+            <g
               key={`${value}-${index}`}
-              cx={24 + index * 64}
-              cy={172 - value * 1.4}
-              r={index === chartValues.length - 1 ? 5 : 3.5}
-              className={
-                index === chartValues.length - 1
-                  ? 'fill-habico-orange stroke-habico-white'
-                  : 'fill-habico-white stroke-tangy-blue'
-              }
-              strokeWidth="2"
-            />
+              className="cursor-pointer"
+              onMouseEnter={() => setHoveredIndex(index)}
+              onMouseLeave={() => setHoveredIndex(null)}
+              onFocus={() => setHoveredIndex(index)}
+              onBlur={() => setHoveredIndex(null)}
+              tabIndex={0}
+              role="button"
+              aria-label={`${chartLabels[index % chartLabels.length]}: ${value}% activiteit`}
+            >
+              {hoveredIndex === index && (
+                <>
+                  <line
+                    x1={chartPoint(value, index).x}
+                    x2={chartPoint(value, index).x}
+                    y1={chartPoint(value, index).y + 8}
+                    y2="172"
+                    className="stroke-habico-orange/50"
+                    strokeDasharray="3 4"
+                  />
+                  <rect
+                    x={Math.min(Math.max(chartPoint(value, index).x - 27, 4), 709)}
+                    y={Math.max(chartPoint(value, index).y - 38, 4)}
+                    width="54"
+                    height="24"
+                    rx="8"
+                    className="fill-habico-navy-dark"
+                  />
+                  <text
+                    x={chartPoint(value, index).x}
+                    y={Math.max(chartPoint(value, index).y - 22, 20)}
+                    textAnchor="middle"
+                    className="fill-habico-white text-[11px] font-bold"
+                  >
+                    {value}%
+                  </text>
+                </>
+              )}
+              <circle
+                cx={chartPoint(value, index).x}
+                cy={chartPoint(value, index).y}
+                r={
+                  hoveredIndex === index
+                    ? 7
+                    : index === chartValues.length - 1
+                      ? 5
+                      : 3.5
+                }
+                className={
+                  hoveredIndex === index
+                    ? 'fill-habico-orange stroke-habico-white'
+                    : index === chartValues.length - 1
+                      ? 'fill-habico-orange stroke-habico-white'
+                      : 'fill-habico-white stroke-tangy-blue'
+                }
+                strokeWidth="2"
+              />
+            </g>
           ))}
         </svg>
         <div className="text-habico-blue/45 mt-1 flex justify-between px-1 text-[9px] font-bold">
