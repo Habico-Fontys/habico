@@ -2,6 +2,7 @@
 
 import { useRouter, usePathname } from 'next/navigation';
 import { Button } from '@/components/Button';
+import { Datum } from '@/components/Datum';
 
 const pageTitles: Record<string, string> = {
   '/dashboard': 'Dashboard',
@@ -22,9 +23,9 @@ export function Topbar() {
       <div className="min-w-0">
       </div>
       <div className="flex shrink-0 items-center gap-2 sm:gap-4">
-        <span className="bg-habico-blue/5 text-habico-blue hidden items-center gap-2 rounded-full px-3 py-2 text-[11px] font-semibold sm:inline-flex">
-          <span className="bg-habico-orange size-2 rounded-full" /> Maandag, 9 november
-        </span>
+       <span className="bg-habico-blue/5 text-habico-blue hidden items-center gap-2 rounded-full px-3 py-2 text-[11px] font-semibold sm:inline-flex">
+       <span className="bg-habico-orange size-2 rounded-full" /> <Datum variant="kort" />
+      </span>
         <Button
           className="min-h-10 whitespace-nowrap rounded-lg px-3 text-xs sm:px-4"
           variant="secondary"

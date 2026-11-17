@@ -12,6 +12,7 @@ import {
   RotateCcw,
   Settings,
   ShoppingCart,
+  User,
   Users,
   ListChecks,
   type LucideIcon,
@@ -27,12 +28,15 @@ const alleItems: NavItem[] = [
   { id: "huisgenoten", href: "/dashboard/huisgenoten", label: "Huisgenoten", icon: Users },
   { id: "instellingen", href: "/dashboard/instellingen", label: "Instellingen", icon: Settings },
   { id: "takenlijst", href: "/dashboard/takenlijst", label: "Takenlijst", icon: ListChecks },
+  { id: "profiel", href: "/dashboard/profiel", label: "Profiel", icon: User },
 ];
 
 // Zo ziet de balk eruit totdat de gebruiker iets aanpast
-const standaardIds = ["overzicht", "boodschappen", "activiteiten", "huisgenoten"];
+const standaardIds = ["overzicht", "boodschappen", "activiteiten", "takenlijst"];
 
 const STORAGE_KEY = "habico-nav-balk";
+
+
 
 function zoekHuidigId(pathname: string): string | null {
   let beste: NavItem | null = null;
@@ -133,6 +137,7 @@ export default function MobileNav() {
   }
 
   function navigeerViaMenu(item: NavItem) {
+    if (flashingId) return;
     setFlashingId(item.id);
     window.setTimeout(() => {
       setFlashingId(null);
