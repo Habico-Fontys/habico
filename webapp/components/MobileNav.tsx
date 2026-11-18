@@ -10,7 +10,6 @@ import {
   Pencil,
   Plus,
   RotateCcw,
-  Settings,
   ShoppingCart,
   User,
   Users,
@@ -26,7 +25,6 @@ const alleItems: NavItem[] = [
   { id: "boodschappen", href: "/dashboard/boodschappenlijst", label: "Boodschappen", icon: ShoppingCart },
   { id: "activiteiten", href: "/dashboard/activiteiten", label: "Activiteiten", icon: CalendarDays },
   { id: "huisgenoten", href: "/dashboard/huisgenoten", label: "Huisgenoten", icon: Users },
-  { id: "instellingen", href: "/dashboard/instellingen", label: "Instellingen", icon: Settings },
   { id: "takenlijst", href: "/dashboard/takenlijst", label: "Takenlijst", icon: ListChecks },
   { id: "profiel", href: "/dashboard/profiel", label: "Profiel", icon: User },
 ];
