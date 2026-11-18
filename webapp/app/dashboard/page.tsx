@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import {
   ArrowUpRight,
   CalendarDays,
@@ -26,9 +26,9 @@ import {
   berekenWeekTotalen,
   filterBijdragen,
   selecteerAgendaItems,
-  type Bijdrage,
 } from "./_lib/dashboard";
 import { useLocalStorageValue } from "@/hooks/useLocalStorageValue";
+import { useVandaag } from "./_hooks/useVandaag";
 import {
   ACTIVITEITEN_OPSLAG,
   BEGIN_ACTIVITEITEN,
@@ -70,9 +70,18 @@ const HUIS = {
   gebruiker: "Marvin",
 };
 
+const GEEN_REGISTRATIES: unknown[] = [];
+const isLijst = (waarde: unknown): waarde is unknown[] =>
+  Array.isArray(waarde);
+
 export default function DashboardPage() {
-  const [vandaag, setVandaag] = useState<Date | null>(null);
-  const [bijdragen, setBijdragen] = useState<Bijdrage[]>([]);
+  const vandaag = useVandaag();
+  const [registraties] = useLocalStorageValue(
+    REGISTRATIES_OPSLAG,
+    GEEN_REGISTRATIES,
+    isLijst,
+    { onInvalid: "fallback" },
+  );
   const [boodschappen] = useLocalStorageValue(
     BOODSCHAPPEN_OPSLAG,
     BEGIN_BOODSCHAPPEN_DATA,
@@ -89,40 +98,20 @@ export default function DashboardPage() {
     isSensorData,
   );
 
-  useEffect(() => {
-    function laden() {
-      const nu = new Date();
-      setVandaag(nu);
+  const bijdragen = useMemo(() => {
+    if (!vandaag) return [];
 
-      // De week begint op maandag, gelijk aan de Takenlijst.
-      const maandag = startVanWeek(nu);
-      const zondag = new Date(maandag);
-      zondag.setDate(maandag.getDate() + 6);
-
-      try {
-        const opgeslagen: unknown = JSON.parse(
-          localStorage.getItem(REGISTRATIES_OPSLAG) ?? "[]",
-        );
-        const geldigeBijdragen = filterBijdragen(
-          opgeslagen,
-          datumSleutel(maandag),
-          datumSleutel(zondag),
-        );
-        if (geldigeBijdragen === null) return;
-        setBijdragen(geldigeBijdragen);
-      } catch {
-        setBijdragen([]);
-      }
-    }
-
-    laden();
-    window.addEventListener("storage", laden);
-    window.addEventListener("focus", laden);
-    return () => {
-      window.removeEventListener("storage", laden);
-      window.removeEventListener("focus", laden);
-    };
-  }, []);
+    const maandag = startVanWeek(vandaag);
+    const zondag = new Date(maandag);
+    zondag.setDate(maandag.getDate() + 6);
+    return (
+      filterBijdragen(
+        registraties,
+        datumSleutel(maandag),
+        datumSleutel(zondag),
+      ) ?? []
+    );
+  }, [registraties, vandaag]);
 
   // ---------- 6. Totalen voor de kaarten ----------
   const { minuten, percentage } = berekenWeekTotalen(

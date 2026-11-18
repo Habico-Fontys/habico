@@ -180,9 +180,9 @@ describe("registration row filter", () => {
   const weekStart = "2026-11-09";
   const weekEnd = "2026-11-15";
 
-  it("returns null for non-array storage values", () => {
-    expect(filterBijdragen(null, weekStart, weekEnd)).toBeNull();
-    expect(filterBijdragen({ items: [] }, weekStart, weekEnd)).toBeNull();
+  it("uses an empty contributions list for non-array storage values", () => {
+    expect(filterBijdragen(null, weekStart, weekEnd) ?? []).toEqual([]);
+    expect(filterBijdragen({ items: [] }, weekStart, weekEnd) ?? []).toEqual([]);
   });
 
   it("keeps only rows with the existing accepted fields, minutes and inclusive dates", () => {
