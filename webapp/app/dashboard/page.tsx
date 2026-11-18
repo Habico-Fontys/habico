@@ -1,37 +1,14 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect, useRef, useState, type ReactNode } from "react";
-import {
-  ArrowUpRight,
-  CalendarDays,
-  ChevronRight,
-  ShoppingBasket,
-  Trash2,
-  UsersRound,
-  Wallet,
-} from "lucide-react";
-import { useLocalStorageValue } from "@/hooks/useLocalStorageValue";
-import {
-  ACTIVITEITEN_OPSLAG,
-  BEGIN_ACTIVITEITEN,
-  isAgendaActiviteiten,
-} from "./activiteiten/data";
-import {
-  BOODSCHAPPEN_OPSLAG,
-  BEGIN_BOODSCHAPPEN_DATA,
-  isBoodschappenData,
-} from "./boodschappenlijst/data";
-import { HUISGENOTEN, HUISNAAM } from "./huisgenoten/data";
-import {
-  REGISTRATIES_OPSLAG,
-  WEEKDOEL_MINUTEN,
-} from "./takenlijst/data";
-import {
-  BEGIN_SENSOR,
-  isSensorData,
-  SENSOR_OPSLAG,
-} from "./afval/sensor";
+import { AgendaKaart } from "./_components/kaarten/AgendaKaart";
+import { AfvalKaart } from "./_components/kaarten/AfvalKaart";
+import { BoodschappenKaart } from "./_components/kaarten/BoodschappenKaart";
+import { BudgetKaart } from "./_components/kaarten/BudgetKaart";
+import { HuisgenotenKaart } from "./_components/kaarten/HuisgenotenKaart";
+import { MinutenKaart } from "./_components/kaarten/MinutenKaart";
+import { useDashboardData } from "./_hooks/useDashboardData";
+import { HUISNAAM } from "./huisgenoten/data";
+
 
 // ---------- 1. Installatie ----------
 // Plaats dit bestand in app/dashboard/page.tsx (of src/app/dashboard/page.tsx).
@@ -53,311 +30,28 @@ const HUIS = {
   gebruiker: "Marvin",
 };
 
-type Bijdrage = { bewoner: string; minuten: number; datum: string };
-const euro = (bedrag: number) =>
-  new Intl.NumberFormat("nl-NL", {
-    style: "currency",
-    currency: "EUR",
-  }).format(bedrag);
-
-// ---------- Animaties: cijfers en elementen komen rustig in beeld ----------
-// Geen extra pakket nodig. De browserinstelling voor minder beweging gaat voor.
-function OplopendGetal({ waarde, bedrag = false }: { waarde: number; bedrag?: boolean }) {
-  const element = useRef<HTMLSpanElement>(null);
-  const huidig = useRef(0);
-  const [getal, setGetal] = useState(0);
-
-  useEffect(() => {
-    const voorkeur = window.matchMedia("(prefers-reduced-motion: reduce)");
-    let frame = 0;
-    let observer: IntersectionObserver | undefined;
-
-    function directTonen() {
-      cancelAnimationFrame(frame);
-      huidig.current = waarde;
-      setGetal(waarde);
-    }
-
-    function starten() {
-      if (voorkeur.matches) return directTonen();
-      const begin = huidig.current;
-      const starttijd = performance.now();
-
-      function stap(tijd: number) {
-        const voortgang = Math.min((tijd - starttijd) / 1000, 1);
-        // Ease-out: snel beginnen, zacht afremmen bij het juiste getal.
-        const soepel = 1 - Math.pow(1 - voortgang, 3);
-        huidig.current = begin + (waarde - begin) * soepel;
-        setGetal(huidig.current);
-        if (voortgang < 1) frame = requestAnimationFrame(stap);
-      }
-      frame = requestAnimationFrame(stap);
-    }
-
-    if (voorkeur.matches || !("IntersectionObserver" in window)) {
-      directTonen();
-    } else {
-      observer = new IntersectionObserver(([entry]) => {
-        if (entry.isIntersecting) {
-          observer?.disconnect();
-          starten();
-        }
-      });
-      if (element.current) observer.observe(element.current);
-    }
-
-    function voorkeurGewijzigd() {
-      if (voorkeur.matches) {
-        observer?.disconnect();
-        directTonen();
-      }
-    }
-    voorkeur.addEventListener("change", voorkeurGewijzigd);
-    return () => {
-      observer?.disconnect();
-      cancelAnimationFrame(frame);
-      voorkeur.removeEventListener("change", voorkeurGewijzigd);
-    };
-  }, [waarde]);
-
-  return (
-    <span ref={element} className="tabular-nums">
-      {/* Screenreaders lezen alleen de uiteindelijke waarde. */}
-      <span aria-hidden="true">{bedrag ? euro(getal) : Math.round(getal)}</span>
-      <span className="sr-only">{bedrag ? euro(waarde) : waarde}</span>
-    </span>
-  );
-}
-
-// Speel een binnenkomst één keer af zodra het element zichtbaar wordt.
-function useBinnenkomst<T extends HTMLElement>(grafiek = false) {
-  const ref = useRef<T>(null);
-
-  useEffect(() => {
-    const element = ref.current;
-    const voorkeur = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (!element || voorkeur.matches || !("IntersectionObserver" in window)) return;
-
-    let animatie: Animation | undefined;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        observer.disconnect();
-        if (voorkeur.matches) return;
-        animatie = element.animate(
-          grafiek
-            ? [{ transform: "scaleY(0)" }, { transform: "scaleY(1)" }]
-            : [
-                { opacity: 0, transform: "translateY(12px)" },
-                { opacity: 1, transform: "translateY(0)" },
-              ],
-          { duration: grafiek ? 950 : 500, easing: "cubic-bezier(0.22, 1, 0.36, 1)" },
-        );
-      },
-      { threshold: 0.1 },
-    );
-    observer.observe(element);
-
-    function voorkeurGewijzigd() {
-      if (voorkeur.matches) animatie?.cancel();
-    }
-    voorkeur.addEventListener("change", voorkeurGewijzigd);
-    return () => {
-      observer.disconnect();
-      animatie?.cancel();
-      voorkeur.removeEventListener("change", voorkeurGewijzigd);
-    };
-  }, [grafiek]);
-
-  return ref;
-}
-
-// De hoogte blijft gekoppeld aan de minuten; de balk groeit vanaf de onderkant.
-function GrafiekBalk({ hoogte }: { hoogte: number }) {
-  const ref = useBinnenkomst<HTMLDivElement>(true);
-  return (
-    <div
-      ref={ref}
-      className="min-h-1.5 origin-bottom rounded-t-xl bg-[#1D38FF] transition-[height] duration-700 ease-out motion-reduce:transition-none"
-      style={{ height: `${hoogte}%` }}
-    />
-  );
-}
-
-// ---------- 4. Herbruikbare kaart ----------
-// De hele kaart is één link. Er zitten geen losse knoppen in een link.
-function DashboardKaart({
-  href,
-  label,
-  className = "",
-  children,
-}: {
-  href: string;
-  label: string;
-  className?: string;
-  children: ReactNode;
-}) {
-  const kaartRef = useBinnenkomst<HTMLAnchorElement>();
-
-  return (
-    <Link
-      ref={kaartRef}
-      href={href}
-      aria-label={label}
-      className={`group relative flex min-w-0 flex-col overflow-hidden rounded-[30px] p-6 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#FD7702] motion-reduce:transform-none motion-reduce:transition-none sm:p-7 ${className}`}
-    >
-      {children}
-    </Link>
-  );
-}
-
-// Het pijltje beweegt mee wanneer je over de kaart gaat.
-function Pijl({ donker = false }: { donker?: boolean }) {
-  return (
-    <span
-      aria-hidden="true"
-      className={`flex size-9 shrink-0 items-center justify-center rounded-full transition-transform duration-300 motion-reduce:transition-none ${
-        donker ? "bg-white/10 text-white" : "bg-[#f1f2f7] text-[#032747]"
-      }`}
-    >
-      <ArrowUpRight size={18} />
-    </span>
-  );
-}
-
-// ---------- 5. Datum en opgeslagen minuten ----------
-function datumSleutel(datum: Date) {
-  return [
-    datum.getFullYear(),
-    String(datum.getMonth() + 1).padStart(2, "0"),
-    String(datum.getDate()).padStart(2, "0"),
-  ].join("-");
-}
-
 export default function DashboardPage() {
-  const [vandaag, setVandaag] = useState<Date | null>(null);
-  const [bijdragen, setBijdragen] = useState<Bijdrage[]>([]);
-  const [boodschappen] = useLocalStorageValue(
-    BOODSCHAPPEN_OPSLAG,
-    BEGIN_BOODSCHAPPEN_DATA,
-    isBoodschappenData,
-  );
-  const [activiteiten] = useLocalStorageValue(
-    ACTIVITEITEN_OPSLAG,
-    BEGIN_ACTIVITEITEN,
-    isAgendaActiviteiten,
-  );
-  const [sensor] = useLocalStorageValue(
-    SENSOR_OPSLAG,
-    BEGIN_SENSOR,
-    isSensorData,
-  );
-
-  useEffect(() => {
-    function laden() {
-      const nu = new Date();
-      setVandaag(nu);
-
-      // De week begint op maandag, gelijk aan de Takenlijst.
-      const maandag = new Date(nu);
-      maandag.setDate(nu.getDate() - ((nu.getDay() + 6) % 7));
-      const zondag = new Date(maandag);
-      zondag.setDate(maandag.getDate() + 6);
-
-      try {
-        const opgeslagen: unknown = JSON.parse(
-          localStorage.getItem(REGISTRATIES_OPSLAG) ?? "[]",
-        );
-        if (!Array.isArray(opgeslagen)) return;
-
-        setBijdragen(
-          opgeslagen.filter(
-            (item): item is Bijdrage =>
-              item !== null &&
-              typeof item === "object" &&
-              typeof item.bewoner === "string" &&
-              typeof item.minuten === "number" &&
-              Number.isFinite(item.minuten) &&
-              item.minuten > 0 &&
-              typeof item.datum === "string" &&
-              item.datum >= datumSleutel(maandag) &&
-              item.datum <= datumSleutel(zondag),
-          ),
-        );
-      } catch {
-        setBijdragen([]);
-      }
-    }
-
-    laden();
-    window.addEventListener("storage", laden);
-    window.addEventListener("focus", laden);
-    return () => {
-      window.removeEventListener("storage", laden);
-      window.removeEventListener("focus", laden);
-    };
-  }, []);
-
-  // ---------- 6. Totalen voor de kaarten ----------
-  const minuten = bijdragen.reduce((som, item) => som + item.minuten, 0);
-  const percentage = Math.round((minuten / WEEKDOEL_MINUTEN) * 100);
-  const ingelegd = boodschappen.bewoners.reduce(
-    (totaal, bewoner) => totaal + bewoner.betaaldBedrag,
-    0,
-  );
-  const uitgegeven = boodschappen.producten
-    .filter((product) => product.gekocht)
-    .reduce((totaal, product) => totaal + product.prijs, 0);
-  const beschikbaar = ingelegd - uitgegeven;
-  const productenNodig = boodschappen.producten.filter(
-    (product) => !product.gekocht,
-  );
-  const agendaItems = [...activiteiten]
-    .sort((a, b) => `${a.date}T${a.time}`.localeCompare(`${b.date}T${b.time}`))
-    .slice(0, 3);
-  const begroeting = !vandaag
-    ? "Welkom thuis"
-    : vandaag.getHours() < 12
-      ? "Goedemorgen"
-      : vandaag.getHours() < 18
-        ? "Goedemiddag"
-        : "Goedenavond";
-
-  const dagen = Array.from({ length: 7 }, (_, index) => {
-    const datum = vandaag ? new Date(vandaag) : null;
-    if (datum) {
-      datum.setDate(datum.getDate() - ((datum.getDay() + 6) % 7) + index);
-    }
-    return {
-      naam: ["M", "D", "W", "D", "V", "Z", "Z"][index],
-      minuten: datum
-        ? bijdragen
-            .filter((item) => item.datum === datumSleutel(datum))
-            .reduce((som, item) => som + item.minuten, 0)
-        : 0,
-    };
-  });
-  const hoogsteDag = Math.max(30, ...dagen.map((dag) => dag.minuten));
+  const data = useDashboardData();
 
   // ---------- 7. Dashboard ----------
   return (
-    <main className="mx-auto w-full max-w-[1500px] p-4 font-poppins text-[#032747] sm:p-6 lg:p-10">
+    <main className="mx-auto w-full max-w-[1500px] p-4 font-poppins text-dashboard-ink sm:p-6 lg:p-10">
       {/* De begroeting blijft boven het kaartenoverzicht staan. */}
       <header className="mb-7 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#FD7702]">
+          <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-fire-orange">
             {HUISNAAM} · Samen thuis
           </p>
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            {begroeting}, {HUIS.gebruiker}
-            <span className="text-[#FD7702]">.</span>
+            {data.begroeting}, {HUIS.gebruiker}
+            <span className="text-fire-orange">.</span>
           </h1>
-          <p className="mt-2 text-sm leading-6 text-[#6687b0]">
+          <p className="mt-2 text-sm leading-6 text-dashboard-muted">
             Een fijn huis begint bij jullie. Wat pak jij vandaag op?
           </p>
         </div>
-        <span className="rounded-full border border-[#e3e2e0] bg-[#fcfaf7] px-4 py-2 text-xs">
-          <span className="mr-2 inline-block size-2 rounded-full bg-[#FD7702]" />
+        <span className="rounded-full border border-dashboard-border bg-dashboard-surface px-4 py-2 text-xs">
+          <span className="mr-2 inline-block size-2 rounded-full bg-fire-orange" />
           Jouw huis, in één overzicht
         </span>
       </header>
@@ -365,277 +59,34 @@ export default function DashboardPage() {
       {/* Desktop: drie kolommen. Agenda loopt over twee rijen.
           Mobiel: één kolom, zodat bedragen en teksten goed leesbaar blijven. */}
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {/* Blauwe hoofdkaart: direct naar de gezamenlijke boodschappen. */}
-        <DashboardKaart
+        <BudgetKaart
           href={PAGINAS.boodschappen}
-          label="Bekijk het gezamenlijke boodschappenbudget"
-          className="min-h-[265px] bg-[linear-gradient(100deg,_#1D38FF,_#003F7D)] text-white"
-        >
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute -right-16 -top-20 size-72 rounded-full border-[45px] border-white/5"
-          />
-          <div className="relative flex items-center justify-between">
-            <span className="flex items-center gap-2 text-sm text-white/80">
-              <Wallet size={16} /> Ons huishoudpotje
-            </span>
-            <Pijl donker />
-          </div>
-          <p className="relative mt-5 text-5xl font-semibold tracking-tight">
-            <OplopendGetal waarde={beschikbaar} bedrag />
-          </p>
-          <p className="mt-2 text-xs text-white/70">
-            Beschikbaar voor gezamenlijke boodschappen
-          </p>
-          <div className="relative mt-auto flex flex-wrap items-center justify-between gap-3 pt-7">
-            <span className="rounded-full bg-white px-4 py-2 text-xs font-semibold text-[#1D38FF]">
-              Bekijk budget
-            </span>
-            <span className="text-xs text-white/75">{euro(uitgegeven)} uitgegeven</span>
-          </div>
-        </DashboardKaart>
-
-        {/* Donkere kaart met de echte geregistreerde minuten per weekdag. */}
-        <DashboardKaart
+          beschikbaar={data.beschikbaar}
+          uitgegeven={data.uitgegeven}
+        />
+        <MinutenKaart
           href={PAGINAS.taken}
-          label="Open de takenlijst en registreer minuten"
-          className="min-h-[265px] bg-[#182234] text-white"
-        >
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-medium text-white">Samen een schoon huis</h2>
-            <Pijl donker />
-          </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <strong className="text-3xl font-semibold text-white">
-              <OplopendGetal waarde={minuten} /> min
-            </strong>
-            <span className="text-xs text-white">van {WEEKDOEL_MINUTEN}</span>
-            <span className="ml-auto text-sm text-white">
-              <OplopendGetal waarde={percentage} />%
-            </span>
-          </div>
-          <div
-            className="mt-auto flex h-28 items-end gap-2 pt-4"
-            aria-label="Geregistreerde minuten per dag"
-          >
-            {dagen.map((dag, index) => (
-              <div
-                key={index}
-                className="flex h-full min-w-0 flex-1 flex-col justify-end gap-2"
-                title={`${["Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag", "Zondag"][index]}: ${dag.minuten} min`}
-              >
-                <GrafiekBalk hoogte={Math.max(5, (dag.minuten / hoogsteDag) * 100)} />
-                <span className="text-center text-[10px] text-white">
-                  {dag.naam}
-                  <span className="sr-only">: {dag.minuten} minuten</span>
-                </span>
-              </div>
-            ))}
-          </div>
-        </DashboardKaart>
-
-        {/* Hoge witte agendakaart: gestapelde kaarten als in de referentie. */}
-        <DashboardKaart
+          minuten={data.minuten}
+          percentage={data.percentage}
+          weekdoel={data.weekdoel}
+          grafiekDagen={data.grafiekDagen}
+        />
+        <AgendaKaart
           href={PAGINAS.agenda}
-          label="Open de gezamenlijke agenda"
-          className="border border-[#e3e2e0] bg-[#fcfaf7] xl:col-start-3 xl:row-span-2 xl:row-start-1"
-        >
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold">Samen vooruit</h2>
-            <Pijl />
-          </div>
-          <p className="mt-3 text-xs text-[#6687b0]">Maak ruimte voor elkaar.</p>
-          {/* Gestapelde kaarten met een effen primaire blauwe voorkant. */}
-          <div aria-hidden="true" className="relative mb-6 mt-8 h-40">
-            <div className="absolute inset-x-6 top-0 h-28 -rotate-6 rounded-2xl bg-[#dce2ff]" />
-            <div className="absolute inset-x-3 top-4 h-28 rotate-3 rounded-2xl bg-[#FD7702]" />
-            <div className="absolute inset-x-0 top-8 flex h-32 flex-col justify-between rounded-2xl bg-[#1D38FF] p-5 text-white">
-              <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white">
-                {HUISNAAM}
-              </span>
-              <div className="flex items-end justify-between gap-3">
-                <span className="text-2xl font-semibold leading-tight text-white">
-                  Meer samen.
-                  <br />
-                  Meer thuis.
-                </span>
-                <CalendarDays
-                  size={30}
-                  strokeWidth={1.5}
-                  className="shrink-0 text-white"
-                />
-              </div>
-            </div>
-          </div>
-          <h3 className="mb-3 text-xs font-semibold text-[#6687b0]">
-            Uit de huisagenda
-          </h3>
-          <div className="space-y-2">
-            {agendaItems.length > 0 ? agendaItems.map((activiteit) => {
-              const datum = new Date(`${activiteit.date}T12:00:00`);
-              return (
-                <div
-                  key={activiteit.id}
-                  className="flex items-center gap-3 rounded-2xl bg-[#f0f1f6] p-3"
-                >
-                  <span className="flex size-10 shrink-0 flex-col items-center justify-center rounded-xl bg-white text-sm font-bold">
-                    {datum.getDate()}
-                    <span className="text-[8px] font-medium uppercase text-[#6687b0]">
-                      {datum.toLocaleDateString("nl-NL", { month: "short" })}
-                    </span>
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-xs font-semibold">{activiteit.title}</p>
-                    <p className="mt-1 text-[10px] leading-4 text-[#6687b0]">
-                      {activiteit.time} · {activiteit.location}
-                    </p>
-                  </div>
-                  <ChevronRight size={14} className="ml-auto shrink-0 text-[#6687b0]" />
-                </div>
-              );
-            }) : (
-              <p className="rounded-2xl bg-[#f0f1f6] p-4 text-xs text-[#6687b0]">
-                Er staan nog geen activiteiten in de agenda.
-              </p>
-            )}
-          </div>
-          <span className="mt-6 flex items-center gap-2 text-xs font-semibold text-[#1D38FF]">
-            Bekijk de agenda <ArrowUpRight size={14} />
-          </span>
-        </DashboardKaart>
-
-        {/* Korte lijst: één klik brengt je naar de volledige boodschappenpagina. */}
-        <DashboardKaart
+          agendaItems={data.agendaItems}
+        />
+        <BoodschappenKaart
           href={PAGINAS.boodschappen}
-          label="Open de gezamenlijke boodschappenlijst"
-          className="border border-[#e3e2e0] bg-[#fcfaf7]"
-        >
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold">Nog op het lijstje</h2>
-            <Pijl />
-          </div>
-          <p className="mt-2 text-xs text-[#6687b0]">
-            Kleine dingen. Fijn voor iedereen.
-          </p>
-          <div className="my-5 divide-y divide-[#e3e2e0]">
-            {productenNodig.length > 0 ? (
-              productenNodig.slice(0, 2).map((product) => (
-                <div key={product.id} className="flex items-center gap-3 py-4">
-                  <span className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#e9eaff] text-[#1D38FF]">
-                    <ShoppingBasket size={17} />
-                  </span>
-                  <div>
-                    <p className="text-sm font-medium">{product.naam}</p>
-                    <p className="mt-1 text-xs text-[#6687b0]">
-                      {product.omschrijving || "Nog nodig"}
-                    </p>
-                  </div>
-                  <span className="ml-auto whitespace-nowrap text-xs font-semibold">
-                    {euro(product.prijs)}
-                  </span>
-                </div>
-              ))
-            ) : (
-              <p className="py-6 text-center text-sm text-[#6687b0]">
-                Alles op het lijstje is al gekocht.
-              </p>
-            )}
-          </div>
-          <span className="mt-auto flex items-center justify-between text-xs font-semibold text-[#1D38FF]">
-            {productenNodig.length} producten nodig <ArrowUpRight size={16} />
-          </span>
-        </DashboardKaart>
-
-        {/* Jouw bak gebruikt dezelfde sensor als de afvalpagina. */}
-        <DashboardKaart
+          productenNodig={data.productenNodig}
+        />
+        <AfvalKaart
           href={PAGINAS.afval}
-          label="Bekijk jouw bak en de afvalkalender"
-          className="min-h-[265px] border border-[#e3e2e0] bg-[#fcfaf7] xl:col-start-2 xl:row-start-2"
-        >
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold">Jouw bak</h2>
-            <Pijl />
-          </div>
-          <div className="mt-5 flex flex-1 items-center gap-4">
-            <div
-              role="img"
-              aria-label={`${sensor.naam}, ${sensor.soort}, ${sensor.vulgraad}% gevuld`}
-              className="size-24 shrink-0 rounded-full p-[9px]"
-              style={{
-                background: `conic-gradient(#1D38FF ${sensor.vulgraad}%, #e9eaff ${sensor.vulgraad}% 100%)`,
-              }}
-            >
-              <div className="flex size-full flex-col items-center justify-center rounded-full bg-[#fcfaf7]">
-                <strong className="text-lg font-bold tabular-nums">
-                  {sensor.vulgraad}%
-                </strong>
-                <span className="text-[9px] text-[#6687b0]">gevuld</span>
-              </div>
-            </div>
-            <div className="min-w-0">
-              <p className="flex items-center gap-2 text-sm font-semibold">
-                <Trash2 size={15} aria-hidden="true" />
-                {sensor.soort}
-              </p>
-              <p className="mt-1 text-xs leading-5 text-[#6687b0]">
-                {sensor.naam}
-              </p>
-              <p className="mt-2 text-xs font-medium text-[#1D38FF]">
-                {100 - sensor.vulgraad}% beschikbaar
-              </p>
-            </div>
-          </div>
-          <span className="mt-5 flex items-center justify-between text-xs font-semibold text-[#1D38FF]">
-            Bekijk de afvalkalender <ArrowUpRight size={16} />
-          </span>
-        </DashboardKaart>
-
-        {/* Jouw mensen: de huisgenoteninformatie staat nu op de plek van de afvalkaart. */}
-        <DashboardKaart
+          sensor={data.sensor}
+          beschikbaar={data.afvalBeschikbaar}
+        />
+        <HuisgenotenKaart
           href={PAGINAS.huisgenoten}
-          label="Bekijk alle huisgenoten"
-          className="border border-[#e3e2e0] bg-[#fcfaf7] text-[#032747] md:col-span-2 xl:col-span-3"
-        >
-          <div className="flex flex-wrap items-center gap-x-8 gap-y-5">
-            <div className="flex min-w-0 flex-wrap items-center gap-4">
-              <div aria-hidden="true" className="flex shrink-0 -space-x-2">
-                {HUISGENOTEN.slice(0, 5).map((huisgenoot, index) => (
-                  <span
-                    key={huisgenoot.id}
-                    className={`flex size-11 items-center justify-center rounded-full border-[3px] border-[#fcfaf7] text-xs font-bold ${index === 1 ? "bg-[#ffe3ca] text-[#a44700]" : "bg-[#e0e5ff] text-[#1D38FF]"}`}
-                  >
-                    {huisgenoot.naam.slice(0, 2).toUpperCase()}
-                  </span>
-                ))}
-              </div>
-              <div>
-                <div className="flex items-center gap-3">
-                  <h2 className="text-lg font-semibold">Jouw mensen</h2>
-                  <Pijl />
-                </div>
-                <p className="mt-1 text-xs leading-5 text-[#6687b0]">
-                  Een huis maken we samen.
-                </p>
-              </div>
-            </div>
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
-              <div>
-                <p className="text-2xl font-semibold leading-tight">
-                  <OplopendGetal waarde={HUISGENOTEN.length} />
-                  <span className="ml-2 text-sm font-normal text-[#6687b0]">
-                    huisgenoten
-                  </span>
-                </p>
-                <p className="mt-1 flex items-center gap-2 text-xs text-[#6687b0]">
-                  Wie doet wat? <UsersRound size={15} />
-                </p>
-              </div>
-              <span className="flex items-center gap-2 rounded-full bg-[#f0f1f6] text-[#1D38FF] px-4 py-2.5 text-xs font-semibold">
-                Bekijk huisgenoten <ArrowUpRight size={16} />
-              </span>
-            </div>
-          </div>
-        </DashboardKaart>
+        />
       </div>
     </main>
   );

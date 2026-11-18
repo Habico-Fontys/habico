@@ -12,6 +12,18 @@
   --color-habico-grey: #d9d9d9;
   --color-habico-landing: #F4F5FA;
   --color-habico-white: #fcfaf6;
+  --color-dashboard-ink: #032747;
+  --color-dashboard-muted: #6687b0;
+  --color-dashboard-surface: #fcfaf7;
+  --color-dashboard-border: #e3e2e0;
+  --color-dashboard-soft-surface: #f0f1f6;
+  --color-dashboard-arrow-surface: #f1f2f7;
+  --color-dashboard-pale-blue: #e9eaff;
+  --color-dashboard-stack-blue: #dce2ff;
+  --color-dashboard-dark: #182234;
+  --color-dashboard-avatar-peach: #ffe3ca;
+  --color-dashboard-avatar-brown: #a44700;
+  --color-dashboard-avatar-blue: #e0e5ff;
   --font-poppins: var(--font-poppins-custom), sans-serif;
    --animate-wiggle: wiggle 2.5s ease-in-out infinite;
 
