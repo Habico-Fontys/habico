@@ -5,14 +5,25 @@ test_fit = false;
 test_cap_thickness = 1;
 
 /* [Load cell] */
+// The wire edge of the cell faces -y. Values marked "estimate" are not measured yet.
 cell_size = 34;
-cell_corner_radius = 8;
-cell_rim_thickness = 2.6;
-center_size = 22;
-center_gap = 3;
-ball_protrusion = 7;
+cell_corner_radius = 10;
+cell_rim_thickness = 2.5;
+frame_width = 2.5;
+wire_frame_width = 7;
+slot_width = 3.5;
+wire_slot_width = 2; // estimate
+tongue_width = 8;
+tongue_slot_width = 2; // estimate
+tongue_slot_reach = 20; // estimate, wire edge to tip
+rivet_line = 13.75;
+rivet_pitch = 18.5;
+rivet_head_d = 5;
+rivet_head_height = 1;
+strap_size = [24, 10];
+strap_thickness = 2; // estimate
+ball_protrusion = 5.3;
 ball_d = 6;
-underside_slot_clearance = 1;
 ball_clearance = 1.5;
 slide_play = 0.1;
 
@@ -24,8 +35,7 @@ plate_corner_radius = 4;
 floor_thickness = 1.6;
 lip_thickness = 0.8;
 lip_depth = 1;
-window_size = 25;
-window_corner_radius = 4;
+window_clearance = 1;
 standoff_height = test_fit ? 0 : ball_protrusion + ball_clearance - floor_thickness;
 
 /* [Wire channel] */
@@ -33,6 +43,7 @@ channel_width = 6;
 channel_bridge = false;
 channel_bridge_length = 3;
 tunnel_height = 3;
+cable_notch_reach = 7; // estimate, how far the sleeve and blob sit under the plate
 
 /* [Click features] */
 hook_flat_half_width = 5.056;
@@ -61,7 +72,7 @@ pad_height = 3;
 center_clearance = 0.2;
 socket_lip_thickness = 1.8;
 socket_lip_depth = 1.5;
-side_lip_length = 9;
+pad_tongue_clearance = 1;
 bridge_plate_thickness = 6;
 bridge_corner_radius = 4;
 
@@ -80,12 +91,24 @@ screw_hole_d = is_slide ? slide_screw_hole_d : click_screw_hole_d;
 screw_head_d = is_slide ? slide_screw_head_d : click_screw_head_d;
 countersink_angle = is_slide ? slide_countersink_angle : click_countersink_angle;
 
-center_corner_radius = center_size / 2 - (cell_size / 2 - cell_corner_radius);
+wire_edge_y = -cell_size / 2;
+frame_inner_x = cell_size / 2 - frame_width;
+frame_inner_y0 = wire_edge_y + wire_frame_width;
+frame_inner_y1 = cell_size / 2 - frame_width;
+frame_inner_radius = cell_corner_radius - frame_width;
+inner_x = frame_inner_x - slot_width;
+inner_y0 = frame_inner_y0 + wire_slot_width;
+inner_y1 = frame_inner_y1 - slot_width;
+inner_corner_radius = frame_inner_radius - slot_width;
+tongue_tip_y = wire_edge_y + tongue_slot_reach;
+rivet_y = wire_edge_y + rivet_line;
+pad_y0 = tongue_tip_y + pad_tongue_clearance;
+
 plate_size = screw_mount ? screw_plate_size : pocket_size + 2 * holder_wall;
 cell_pitch = plate_size + module_gap;
-socket_size = center_size + 2 * (center_clearance + socket_lip_thickness);
-bridge_plate_width = socket_size;
-bridge_plate_length = cell_pitch + socket_size;
+socket_reach = center_clearance + socket_lip_thickness;
+bridge_plate_width = 2 * (inner_y1 + socket_reach);
+bridge_plate_length = cell_pitch + 2 * (inner_x + socket_reach);
 cell_top_z = standoff_height + floor_thickness + cell_rim_thickness;
 
 if (part == "holder") holder();
@@ -98,12 +121,11 @@ module print_plate() {
     spacing = 5;
     holder_count = test_fit ? 1 : 2;
     holders_width = holder_count * plate_size + (holder_count - 1) * spacing;
-    bridge_depth = test_fit ? socket_size : bridge_plate_width;
 
     for (i = [0:holder_count - 1])
         translate([(i + 0.5) * plate_size + i * spacing - holders_width / 2, 0, 0]) holder();
 
-    translate([0, -(plate_size + bridge_depth) / 2 - spacing, 0]) bridge_print();
+    translate([0, -(plate_size + bridge_plate_width) / 2 - spacing, 0]) bridge_print();
 }
 
 module assembly() {
@@ -124,13 +146,31 @@ module holder() {
             if (standoff_height > 0) standoff();
         }
         if (is_slide) underside_slot();
+        cable_notch();
     }
 }
 
 module underside_slot() {
-    width = center_size + underside_slot_clearance;
-    translate([-width / 2, 0, -eps])
-        cube([width, plate_size / 2 + eps, standoff_height + floor_thickness + 2 * eps]);
+    translate([0, 0, -eps])
+        linear_extrude(standoff_height + floor_thickness + 2 * eps)
+            hull() {
+                window_2d();
+                translate([0, plate_size]) window_2d();
+            }
+}
+
+module cable_notch() {
+    length = (plate_size - cell_size) / 2 + cable_notch_reach;
+    translate([-channel_width / 2, -plate_size / 2 - eps, -eps])
+        cube([channel_width, length + eps, standoff_height + floor_thickness + 2 * eps]);
+}
+
+module window_2d() {
+    offset(r = window_clearance) {
+        inner_part_2d();
+        tongue_2d();
+        translate([0, rivet_y]) rounded_square(strap_size, 1);
+    }
 }
 
 module holder_plate() {
@@ -147,9 +187,7 @@ module holder_plate() {
 module standoff() {
     difference() {
         linear_extrude(standoff_height + eps) rounded_square(plate_size, plate_corner_radius);
-        translate([0, 0, -eps])
-            linear_extrude(standoff_height + 3 * eps)
-                offset(r = center_gap) rounded_square(center_size, center_corner_radius);
+        translate([0, 0, -eps]) linear_extrude(standoff_height + 3 * eps) window_2d();
         if (screw_mount)
             for (sx = [-1, 1], sy = [-1, 1])
                 translate([sx * screw_offset, sy * screw_offset, -eps])
@@ -162,10 +200,12 @@ module rounded_square(size, r) {
     offset(r) square(dims - 2 * [r, r], center = true);
 }
 
+module rounded_rect(x0, x1, y0, y1, r) {
+    translate([x0, y0]) offset(r) translate([r, r]) square([x1 - x0 - 2 * r, y1 - y0 - 2 * r]);
+}
+
 module window() {
-    translate([0, 0, -eps])
-        linear_extrude(floor_thickness + 2 * eps)
-            rounded_square(window_size, window_corner_radius);
+    translate([0, 0, -eps]) linear_extrude(floor_thickness + 2 * eps) window_2d();
 }
 
 module pocket() {
@@ -298,11 +338,10 @@ module bridge() {
 
 module socket(height = pad_height) {
     linear_extrude(height + eps) {
-        rounded_square(center_size, center_corner_radius);
+        pad_2d();
         intersection() {
-            offset(r = center_clearance + socket_lip_thickness)
-                rounded_square(center_size, center_corner_radius);
-            lip_region();
+            offset(r = socket_reach) inner_part_2d();
+            pad_region_2d();
         }
     }
 
@@ -310,38 +349,81 @@ module socket(height = pad_height) {
         linear_extrude(socket_lip_depth + eps) socket_lip_2d();
 }
 
+module pad_2d() {
+    intersection() {
+        inner_part_2d();
+        pad_region_2d();
+    }
+}
+
 module socket_lip_2d() {
     intersection() {
         difference() {
-            offset(r = center_clearance + socket_lip_thickness)
-                rounded_square(center_size, center_corner_radius);
-            offset(r = center_clearance) rounded_square(center_size, center_corner_radius);
+            offset(r = socket_reach) inner_part_2d();
+            offset(r = center_clearance) inner_part_2d();
         }
-        lip_region();
+        pad_region_2d();
     }
 }
 
-module lip_region() {
-    translate([-cell_size / 2, center_size / 2 - side_lip_length])
-        square([cell_size, cell_size]);
+// Keeps the pad and its lip in the solid band between the tongue slot tips and the far
+// edge, clear of the tongue, the tongue slots and the rivet heads.
+module pad_region_2d() {
+    translate([-cell_size / 2, pad_y0]) square([cell_size, cell_size]);
+}
+
+module inner_part_2d() {
+    rounded_rect(-inner_x, inner_x, inner_y0, inner_y1, inner_corner_radius);
+}
+
+module frame_inner_2d() {
+    rounded_rect(-frame_inner_x, frame_inner_x, frame_inner_y0, frame_inner_y1, frame_inner_radius);
+}
+
+module tongue_2d() {
+    translate([-tongue_width / 2, frame_inner_y0]) square([tongue_width, tongue_tip_y - frame_inner_y0]);
+}
+
+module tongue_slot_2d() {
+    r = tongue_slot_width / 2;
+    hull() {
+        translate([tongue_width / 2, frame_inner_y0]) square([tongue_slot_width, eps]);
+        translate([tongue_width / 2 + r, tongue_tip_y - r]) circle(r);
+    }
+}
+
+module cell_slot_2d() {
+    difference() {
+        union() {
+            difference() {
+                frame_inner_2d();
+                inner_part_2d();
+            }
+            tongue_slot_2d();
+            mirror([1, 0]) tongue_slot_2d();
+        }
+        translate([-tongue_width / 2, frame_inner_y0 - eps])
+            square([tongue_width, inner_y0 - frame_inner_y0 + 2 * eps]);
+    }
 }
 
 module load_cell() {
-    color("silver") difference() {
-        linear_extrude(cell_rim_thickness) rounded_square(cell_size, cell_corner_radius);
-        translate([0, 0, -eps])
-            linear_extrude(cell_rim_thickness + 2 * eps)
-                intersection() {
-                    difference() {
-                        offset(r = center_gap) rounded_square(center_size, center_corner_radius);
-                        rounded_square(center_size, center_corner_radius);
-                    }
-                    lip_region();
-                }
-    }
     color("silver") {
-        translate([0, 0, -ball_protrusion + ball_d / 2])
-            cylinder(d = ball_d, h = ball_protrusion - ball_d / 2 + eps);
-        translate([0, 0, -ball_protrusion + ball_d / 2]) sphere(d = ball_d);
+        difference() {
+            linear_extrude(cell_rim_thickness) rounded_square(cell_size, cell_corner_radius);
+            translate([0, 0, -eps]) linear_extrude(cell_rim_thickness + 2 * eps) cell_slot_2d();
+        }
+
+        for (sx = [-1, 1])
+            translate([sx * rivet_pitch / 2, rivet_y, cell_rim_thickness - eps])
+                cylinder(d = rivet_head_d, h = rivet_head_height + eps);
+
+        translate([0, rivet_y, -strap_thickness])
+            linear_extrude(strap_thickness + eps) rounded_square(strap_size, 1);
+
+        translate([0, rivet_y, -ball_protrusion + ball_d / 2]) {
+            cylinder(d = ball_d, h = ball_protrusion - ball_d / 2 - strap_thickness + eps);
+            sphere(d = ball_d);
+        }
     }
 }
