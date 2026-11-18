@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useReducedMotion } from "./useReducedMotion";
 
 // Speel een binnenkomst één keer af zodra het element zichtbaar wordt.
@@ -8,14 +8,11 @@ export function useBinnenkomst<T extends HTMLElement>(grafiek = false) {
   const ref = useRef<T>(null);
   const animatie = useRef<Animation | undefined>(undefined);
   const voorkeurActueel = useRef(false);
-  const voorkeurGewijzigd = useCallback((matches: boolean) => {
-    voorkeurActueel.current = matches;
-    if (matches) animatie.current?.cancel();
-  }, []);
-  const voorkeur = useReducedMotion(voorkeurGewijzigd);
+  const voorkeur = useReducedMotion();
 
   useEffect(() => {
     voorkeurActueel.current = voorkeur;
+    if (voorkeur) animatie.current?.cancel();
   }, [voorkeur]);
 
   useEffect(() => {

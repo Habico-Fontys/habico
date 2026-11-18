@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { euro } from "../_lib/euro";
 import { useBinnenkomst } from "../_hooks/useBinnenkomst";
@@ -15,23 +15,16 @@ export function OplopendGetal({ waarde, bedrag = false }: { waarde: number; bedr
   const frame = useRef(0);
   const observer = useRef<IntersectionObserver | undefined>(undefined);
   const [getal, setGetal] = useState(0);
+  const voorkeur = useReducedMotion();
   const voorkeurActueel = useRef(false);
-  const voorkeurGewijzigd = useCallback(
-    (matches: boolean) => {
-      voorkeurActueel.current = matches;
-      if (!matches) return;
-      observer.current?.disconnect();
-      cancelAnimationFrame(frame.current);
-      huidig.current = waarde;
-      setGetal(waarde);
-    },
-    [waarde],
-  );
-  const voorkeur = useReducedMotion(voorkeurGewijzigd);
 
   useEffect(() => {
     voorkeurActueel.current = voorkeur;
-  }, [voorkeur]);
+    if (!voorkeur) return;
+    observer.current?.disconnect();
+    cancelAnimationFrame(frame.current);
+    huidig.current = waarde;
+  }, [voorkeur, waarde]);
 
   useEffect(() => {
     function directTonen() {
@@ -77,7 +70,9 @@ export function OplopendGetal({ waarde, bedrag = false }: { waarde: number; bedr
   return (
     <span ref={element} className="tabular-nums">
       {/* Screenreaders lezen alleen de uiteindelijke waarde. */}
-      <span aria-hidden="true">{bedrag ? euro(getal) : Math.round(getal)}</span>
+      <span aria-hidden="true">
+        {bedrag ? euro(voorkeur ? waarde : getal) : Math.round(voorkeur ? waarde : getal)}
+      </span>
       <span className="sr-only">{bedrag ? euro(waarde) : waarde}</span>
     </span>
   );
