@@ -23,7 +23,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 - For new or refactored routes, keep `page.tsx` focused on composing UI and connecting state; keep calculations and storage logic outside it.
 - For multi-file route features, use route-local `_components/`, `_hooks/` and `_lib/` folders for UI, hooks and pure helpers. Existing features also keep route data in `data.ts`.
-- Components receive data and callbacks through props. Keep calculations pure in `_lib/`; add unit tests when a test runner is configured.
+- Components receive data and callbacks through props. Keep calculations pure in `_lib/`; add unit tests when a test runner is configured. The ~30-line limit applies to logic; presentational components may be longer, but split them when they contain more than one section.
 - Add `"use client"` only to files that use React state/effects or browser APIs.
 - Extract duplicated logic when changing it in more than one place; don't expand the scope of an unrelated change.
 
