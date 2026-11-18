@@ -4,6 +4,7 @@ import {
   bepaalHoogsteDag,
   berekenBudget,
   berekenDagen,
+  berekenGrafiekDagen,
   berekenWeekTotalen,
   filterBijdragen,
   selecteerAgendaItems,
@@ -173,6 +174,21 @@ describe("dashboard calculations", () => {
 
     expect(days.map(({ minuten }) => minuten)).toEqual([20, 0, 45, 0, 0, 0, 0]);
     expect(bepaalHoogsteDag(days)).toBe(45);
+  });
+
+  it("prepares chart heights and weekday titles for presentation", () => {
+    expect(
+      berekenGrafiekDagen(
+        [
+          { naam: "M", minuten: 0 },
+          { naam: "D", minuten: 15 },
+        ],
+        30,
+      ),
+    ).toEqual([
+      { naam: "M", minuten: 0, hoogte: 5, titel: "Maandag: 0 min" },
+      { naam: "D", minuten: 15, hoogte: 50, titel: "Dinsdag: 15 min" },
+    ]);
   });
 });
 

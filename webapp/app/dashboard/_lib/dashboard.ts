@@ -4,6 +4,17 @@ import { datumSleutel, startVanWeek } from "./datum";
 
 export type Bijdrage = { bewoner: string; minuten: number; datum: string };
 export type Dag = { naam: string; minuten: number };
+export type GrafiekDag = Dag & { hoogte: number; titel: string };
+
+const DAGEN_NAMEN = [
+  "Maandag",
+  "Dinsdag",
+  "Woensdag",
+  "Donderdag",
+  "Vrijdag",
+  "Zaterdag",
+  "Zondag",
+];
 
 export function berekenWeekTotalen(bijdragen: Bijdrage[], weekdoel: number) {
   const minuten = bijdragen.reduce((som, item) => som + item.minuten, 0);
@@ -66,6 +77,17 @@ export function berekenDagen(
 
 export function bepaalHoogsteDag(dagen: Dag[]) {
   return Math.max(30, ...dagen.map((dag) => dag.minuten));
+}
+
+export function berekenGrafiekDagen(
+  dagen: Dag[],
+  hoogsteDag: number,
+): GrafiekDag[] {
+  return dagen.map((dag, index) => ({
+    ...dag,
+    hoogte: Math.max(5, (dag.minuten / hoogsteDag) * 100),
+    titel: `${DAGEN_NAMEN[index]}: ${dag.minuten} min`,
+  }));
 }
 
 export function filterBijdragen(
