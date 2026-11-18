@@ -133,7 +133,7 @@ export function Sidebar() {
       <div
         id="huisgenoten-menu"
         aria-hidden={!huisOpen}
-        className={`-mt-px hidden overflow-hidden transition-[grid-template-rows,opacity] duration-300 ease-out motion-reduce:transition-none md:grid ${
+        className={`-mt-px hidden  transition-[grid-template-rows,opacity] duration-300 ease-out motion-reduce:transition-none md:grid ${
           huisOpen
             ? 'grid-rows-[1fr] opacity-100'
             : 'pointer-events-none grid-rows-[0fr] opacity-0'
