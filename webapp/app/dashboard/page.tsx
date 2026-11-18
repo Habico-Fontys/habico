@@ -10,12 +10,10 @@ import {
   UsersRound,
   Wallet,
 } from "lucide-react";
-import {
-  DashboardKaart,
-  GrafiekBalk,
-  OplopendGetal,
-  Pijl,
-} from "./_components/DashboardElements";
+import { DashboardKaart } from "./_components/DashboardKaart";
+import { GrafiekBalk } from "./_components/GrafiekBalk";
+import { OplopendGetal } from "./_components/OplopendGetal";
+import { Pijl } from "./_components/Pijl";
 import { euro } from "./_lib/euro";
 import { datumSleutel, startVanWeek } from "./_lib/datum";
 import {

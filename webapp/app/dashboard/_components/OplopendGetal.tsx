@@ -1,10 +1,7 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect, useRef, useState, type ReactNode } from "react";
-import { ArrowUpRight } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { euro } from "../_lib/euro";
-import { useBinnenkomst } from "../_hooks/useBinnenkomst";
 import { useReducedMotion } from "../_hooks/useReducedMotion";
 
 // ---------- Animaties: cijfers en elementen komen rustig in beeld ----------
@@ -17,6 +14,7 @@ export function OplopendGetal({ waarde, bedrag = false }: { waarde: number; bedr
   const [getal, setGetal] = useState(0);
   const voorkeur = useReducedMotion();
   const voorkeurActueel = useRef(false);
+
 
   useEffect(() => {
     voorkeurActueel.current = voorkeur;
@@ -74,59 +72,6 @@ export function OplopendGetal({ waarde, bedrag = false }: { waarde: number; bedr
         {bedrag ? euro(voorkeur ? waarde : getal) : Math.round(voorkeur ? waarde : getal)}
       </span>
       <span className="sr-only">{bedrag ? euro(waarde) : waarde}</span>
-    </span>
-  );
-}
-
-// De hoogte blijft gekoppeld aan de minuten; de balk groeit vanaf de onderkant.
-export function GrafiekBalk({ hoogte }: { hoogte: number }) {
-  const ref = useBinnenkomst<HTMLDivElement>(true);
-  return (
-    <div
-      ref={ref}
-      className="min-h-1.5 origin-bottom rounded-t-xl bg-[#1D38FF] transition-[height] duration-700 ease-out motion-reduce:transition-none"
-      style={{ height: `${hoogte}%` }}
-    />
-  );
-}
-
-// ---------- 4. Herbruikbare kaart ----------
-// De hele kaart is één link. Er zitten geen losse knoppen in een link.
-export function DashboardKaart({
-  href,
-  label,
-  className = "",
-  children,
-}: {
-  href: string;
-  label: string;
-  className?: string;
-  children: ReactNode;
-}) {
-  const kaartRef = useBinnenkomst<HTMLAnchorElement>();
-
-  return (
-    <Link
-      ref={kaartRef}
-      href={href}
-      aria-label={label}
-      className={`group relative flex min-w-0 flex-col overflow-hidden rounded-[30px] p-6 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#FD7702] motion-reduce:transform-none motion-reduce:transition-none sm:p-7 ${className}`}
-    >
-      {children}
-    </Link>
-  );
-}
-
-// Het pijltje beweegt mee wanneer je over de kaart gaat.
-export function Pijl({ donker = false }: { donker?: boolean }) {
-  return (
-    <span
-      aria-hidden="true"
-      className={`flex size-9 shrink-0 items-center justify-center rounded-full transition-transform duration-300 motion-reduce:transition-none ${
-        donker ? "bg-white/10 text-white" : "bg-[#f1f2f7] text-[#032747]"
-      }`}
-    >
-      <ArrowUpRight size={18} />
     </span>
   );
 }
