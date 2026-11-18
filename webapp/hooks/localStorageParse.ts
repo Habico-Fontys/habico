@@ -9,7 +9,7 @@ export function parseLocalStorageValue<T>(
   rawValue: string | null,
   initialValue: T,
   isValid: Validator<T>,
-  options?: LocalStorageParseOptions,
+  onInvalid: LocalStorageParseOptions["onInvalid"] = "throw",
 ): T {
   if (rawValue === null) return initialValue;
 
@@ -17,12 +17,12 @@ export function parseLocalStorageValue<T>(
   try {
     value = JSON.parse(rawValue);
   } catch (error) {
-    if (options?.onInvalid === "fallback") return initialValue;
+    if (onInvalid === "fallback") return initialValue;
     throw error;
   }
 
   if (!isValid(value)) {
-    if (options?.onInvalid === "fallback") return initialValue;
+    if (onInvalid === "fallback") return initialValue;
     throw new Error(`Opgeslagen gegevens voor "${key}" hebben een ongeldig formaat.`);
   }
 

@@ -12,11 +12,9 @@ const isSettings = (value: unknown): value is Settings =>
 describe.each(["throw", "fallback"] as const)(
   "parseLocalStorageValue with onInvalid=%s",
   (onInvalid) => {
-    const options = { onInvalid };
-
     it("returns the initial value for a null raw value", () => {
       expect(
-        parseLocalStorageValue("settings", null, initialValue, isSettings, options),
+        parseLocalStorageValue("settings", null, initialValue, isSettings, onInvalid),
       ).toBe(initialValue);
     });
 
@@ -27,7 +25,7 @@ describe.each(["throw", "fallback"] as const)(
           '{"enabled":true}',
           initialValue,
           isSettings,
-          options,
+          onInvalid,
         ),
       ).toEqual({ enabled: true });
     });
@@ -40,7 +38,7 @@ describe.each(["throw", "fallback"] as const)(
             "{",
             initialValue,
             isSettings,
-            options,
+            onInvalid,
           ),
         ).toBe(initialValue);
       } else {
@@ -50,7 +48,7 @@ describe.each(["throw", "fallback"] as const)(
             "{",
             initialValue,
             isSettings,
-            options,
+            onInvalid,
           ),
         ).toThrow(SyntaxError);
       }
@@ -64,7 +62,7 @@ describe.each(["throw", "fallback"] as const)(
             '{"enabled":"yes"}',
             initialValue,
             isSettings,
-            options,
+            onInvalid,
           ),
         ).toBe(initialValue);
       } else {
@@ -74,7 +72,7 @@ describe.each(["throw", "fallback"] as const)(
             '{"enabled":"yes"}',
             initialValue,
             isSettings,
-            options,
+            onInvalid,
           ),
         ).toThrow('Opgeslagen gegevens voor "settings" hebben een ongeldig formaat.');
       }

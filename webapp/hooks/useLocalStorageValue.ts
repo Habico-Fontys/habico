@@ -36,6 +36,7 @@ export function useLocalStorageValue<T>(
   isValid: Validator<T>,
   options?: LocalStorageParseOptions,
 ) {
+  const onInvalid = options?.onInvalid ?? "throw";
   const subscribe = useCallback(
     (notify: () => void) => subscribeToValue(key, notify),
     [key],
@@ -47,7 +48,7 @@ export function useLocalStorageValue<T>(
     rawValue,
     initialValue,
     isValid,
-    options,
+    onInvalid,
   );
 
   const setValue = useCallback(
@@ -58,7 +59,7 @@ export function useLocalStorageValue<T>(
         savedValue,
         initialValue,
         isValid,
-        options,
+        onInvalid,
       );
       const nextValue = isUpdater(action) ? action(currentValue) : action;
 
@@ -74,7 +75,7 @@ export function useLocalStorageValue<T>(
       localStorage.setItem(key, serialized);
       window.dispatchEvent(new Event(eventName(key)));
     },
-    [initialValue, isValid, key, options],
+    [initialValue, isValid, key, onInvalid],
   );
 
   return [value, setValue] as const;
