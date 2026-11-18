@@ -35,23 +35,23 @@ export default function DashboardPage() {
 
   // ---------- 7. Dashboard ----------
   return (
-    <main className="mx-auto w-full max-w-[1500px] p-4 font-poppins text-[#032747] sm:p-6 lg:p-10">
+    <main className="mx-auto w-full max-w-[1500px] p-4 font-poppins text-dashboard-ink sm:p-6 lg:p-10">
       {/* De begroeting blijft boven het kaartenoverzicht staan. */}
       <header className="mb-7 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#FD7702]">
+          <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-fire-orange">
             {HUISNAAM} · Samen thuis
           </p>
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
             {data.begroeting}, {HUIS.gebruiker}
-            <span className="text-[#FD7702]">.</span>
+            <span className="text-fire-orange">.</span>
           </h1>
-          <p className="mt-2 text-sm leading-6 text-[#6687b0]">
+          <p className="mt-2 text-sm leading-6 text-dashboard-muted">
             Een fijn huis begint bij jullie. Wat pak jij vandaag op?
           </p>
         </div>
-        <span className="rounded-full border border-[#e3e2e0] bg-[#fcfaf7] px-4 py-2 text-xs">
-          <span className="mr-2 inline-block size-2 rounded-full bg-[#FD7702]" />
+        <span className="rounded-full border border-dashboard-border bg-dashboard-surface px-4 py-2 text-xs">
+          <span className="mr-2 inline-block size-2 rounded-full bg-fire-orange" />
           Jouw huis, in één overzicht
         </span>
       </header>

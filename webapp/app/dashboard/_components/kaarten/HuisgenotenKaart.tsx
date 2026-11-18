@@ -14,7 +14,7 @@ export function HuisgenotenKaart({ href }: HuisgenotenKaartProps) {
     <DashboardKaart
       href={href}
       label="Bekijk alle huisgenoten"
-      className="border border-[#e3e2e0] bg-[#fcfaf7] text-[#032747] md:col-span-2 xl:col-span-3"
+      className="border border-dashboard-border bg-dashboard-surface text-dashboard-ink md:col-span-2 xl:col-span-3"
     >
       <div className="flex flex-wrap items-center gap-x-8 gap-y-5">
         <div className="flex min-w-0 flex-wrap items-center gap-4">
@@ -22,7 +22,7 @@ export function HuisgenotenKaart({ href }: HuisgenotenKaartProps) {
             {HUISGENOTEN.slice(0, 5).map((huisgenoot, index) => (
               <span
                 key={huisgenoot.id}
-                className={`flex size-11 items-center justify-center rounded-full border-[3px] border-[#fcfaf7] text-xs font-bold ${index === 1 ? "bg-[#ffe3ca] text-[#a44700]" : "bg-[#e0e5ff] text-[#1D38FF]"}`}
+                className={`flex size-11 items-center justify-center rounded-full border-[3px] border-dashboard-surface text-xs font-bold ${index === 1 ? "bg-dashboard-avatar-peach text-dashboard-avatar-brown" : "bg-dashboard-avatar-blue text-tangy-blue"}`}
               >
                 {huisgenoot.naam.slice(0, 2).toUpperCase()}
               </span>
@@ -33,7 +33,7 @@ export function HuisgenotenKaart({ href }: HuisgenotenKaartProps) {
               <h2 className="text-lg font-semibold">Jouw mensen</h2>
               <Pijl />
             </div>
-            <p className="mt-1 text-xs leading-5 text-[#6687b0]">
+            <p className="mt-1 text-xs leading-5 text-dashboard-muted">
               Een huis maken we samen.
             </p>
           </div>
@@ -42,15 +42,15 @@ export function HuisgenotenKaart({ href }: HuisgenotenKaartProps) {
           <div>
             <p className="text-2xl font-semibold leading-tight">
               <OplopendGetal waarde={HUISGENOTEN.length} />
-              <span className="ml-2 text-sm font-normal text-[#6687b0]">
+              <span className="ml-2 text-sm font-normal text-dashboard-muted">
                 huisgenoten
               </span>
             </p>
-            <p className="mt-1 flex items-center gap-2 text-xs text-[#6687b0]">
+            <p className="mt-1 flex items-center gap-2 text-xs text-dashboard-muted">
               Wie doet wat? <UsersRound size={15} />
             </p>
           </div>
-          <span className="flex items-center gap-2 rounded-full bg-[#f0f1f6] text-[#1D38FF] px-4 py-2.5 text-xs font-semibold">
+          <span className="flex items-center gap-2 rounded-full bg-dashboard-soft-surface text-tangy-blue px-4 py-2.5 text-xs font-semibold">
             Bekijk huisgenoten <ArrowUpRight size={16} />
           </span>
         </div>

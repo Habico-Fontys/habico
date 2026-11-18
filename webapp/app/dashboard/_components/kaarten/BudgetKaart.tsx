@@ -20,7 +20,7 @@ export function BudgetKaart({
     <DashboardKaart
       href={href}
       label="Bekijk het gezamenlijke boodschappenbudget"
-      className="min-h-[265px] bg-[linear-gradient(100deg,_#1D38FF,_#003F7D)] text-white"
+      className="min-h-[265px] bg-[linear-gradient(100deg,_var(--color-tangy-blue),_var(--color-habico-blue))] text-white"
     >
       <div
         aria-hidden="true"
@@ -39,7 +39,7 @@ export function BudgetKaart({
         Beschikbaar voor gezamenlijke boodschappen
       </p>
       <div className="relative mt-auto flex flex-wrap items-center justify-between gap-3 pt-7">
-        <span className="rounded-full bg-white px-4 py-2 text-xs font-semibold text-[#1D38FF]">
+        <span className="rounded-full bg-white px-4 py-2 text-xs font-semibold text-tangy-blue">
           Bekijk budget
         </span>
         <span className="text-xs text-white/75">{euro(uitgegeven)} uitgegeven</span>

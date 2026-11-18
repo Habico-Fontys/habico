@@ -24,7 +24,7 @@ export function MinutenKaart({
     <DashboardKaart
       href={href}
       label="Open de takenlijst en registreer minuten"
-      className="min-h-[265px] bg-[#182234] text-white"
+      className="min-h-[265px] bg-dashboard-dark text-white"
     >
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-medium text-white">Samen een schoon huis</h2>

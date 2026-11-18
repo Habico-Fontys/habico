@@ -8,7 +8,7 @@ export function GrafiekBalk({ hoogte }: { hoogte: number }) {
   return (
     <div
       ref={ref}
-      className="min-h-1.5 origin-bottom rounded-t-xl bg-[#1D38FF] transition-[height] duration-700 ease-out motion-reduce:transition-none"
+      className="min-h-1.5 origin-bottom rounded-t-xl bg-tangy-blue transition-[height] duration-700 ease-out motion-reduce:transition-none"
       style={{ height: `${hoogte}%` }}
     />
 

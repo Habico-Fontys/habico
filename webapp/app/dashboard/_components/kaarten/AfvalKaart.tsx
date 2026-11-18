@@ -19,7 +19,7 @@ export function AfvalKaart({
     <DashboardKaart
       href={href}
       label="Bekijk jouw bak en de afvalkalender"
-      className="min-h-[265px] border border-[#e3e2e0] bg-[#fcfaf7] xl:col-start-2 xl:row-start-2"
+      className="min-h-[265px] border border-dashboard-border bg-dashboard-surface xl:col-start-2 xl:row-start-2"
     >
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-semibold">Jouw bak</h2>
@@ -31,14 +31,14 @@ export function AfvalKaart({
           aria-label={`${sensor.naam}, ${sensor.soort}, ${sensor.vulgraad}% gevuld`}
           className="size-24 shrink-0 rounded-full p-[9px]"
           style={{
-            background: `conic-gradient(#1D38FF ${sensor.vulgraad}%, #e9eaff ${sensor.vulgraad}% 100%)`,
+            background: `conic-gradient(var(--color-tangy-blue) ${sensor.vulgraad}%, var(--color-dashboard-pale-blue) ${sensor.vulgraad}% 100%)`,
           }}
         >
-          <div className="flex size-full flex-col items-center justify-center rounded-full bg-[#fcfaf7]">
+          <div className="flex size-full flex-col items-center justify-center rounded-full bg-dashboard-surface">
             <strong className="text-lg font-bold tabular-nums">
               {sensor.vulgraad}%
             </strong>
-            <span className="text-[9px] text-[#6687b0]">gevuld</span>
+            <span className="text-[9px] text-dashboard-muted">gevuld</span>
           </div>
         </div>
         <div className="min-w-0">
@@ -46,15 +46,15 @@ export function AfvalKaart({
             <Trash2 size={15} aria-hidden="true" />
             {sensor.soort}
           </p>
-          <p className="mt-1 text-xs leading-5 text-[#6687b0]">
+          <p className="mt-1 text-xs leading-5 text-dashboard-muted">
             {sensor.naam}
           </p>
-          <p className="mt-2 text-xs font-medium text-[#1D38FF]">
+          <p className="mt-2 text-xs font-medium text-tangy-blue">
             {beschikbaar}% beschikbaar
           </p>
         </div>
       </div>
-      <span className="mt-5 flex items-center justify-between text-xs font-semibold text-[#1D38FF]">
+      <span className="mt-5 flex items-center justify-between text-xs font-semibold text-tangy-blue">
         Bekijk de afvalkalender <ArrowUpRight size={16} />
       </span>
     </DashboardKaart>
