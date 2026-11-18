@@ -1,6 +1,10 @@
 "use client";
 
 import { useCallback, useSyncExternalStore, type SetStateAction } from "react";
+import {
+  parseLocalStorageValue,
+  type LocalStorageParseOptions,
+} from "./localStorageParse";
 
 type Validator<T> = (value: unknown) => value is T;
 
@@ -11,14 +15,6 @@ function isUpdater<T>(
   action: SetStateAction<T>,
 ): action is (current: T) => T {
   return typeof action === "function";
-}
-
-function parseValue<T>(key: string, rawValue: string, isValid: Validator<T>): T {
-  const value: unknown = JSON.parse(rawValue);
-  if (!isValid(value)) {
-    throw new Error(`Opgeslagen gegevens voor "${key}" hebben een ongeldig formaat.`);
-  }
-  return value;
 }
 
 function subscribeToValue(key: string, notify: () => void) {
@@ -38,6 +34,7 @@ export function useLocalStorageValue<T>(
   key: string,
   initialValue: T,
   isValid: Validator<T>,
+  options?: LocalStorageParseOptions,
 ) {
   const subscribe = useCallback(
     (notify: () => void) => subscribeToValue(key, notify),
@@ -45,16 +42,24 @@ export function useLocalStorageValue<T>(
   );
   const getSnapshot = useCallback(() => localStorage.getItem(key), [key]);
   const rawValue = useSyncExternalStore(subscribe, getSnapshot, noServerValue);
-  const value =
-    rawValue === null ? initialValue : parseValue(key, rawValue, isValid);
+  const value = parseLocalStorageValue(
+    key,
+    rawValue,
+    initialValue,
+    isValid,
+    options,
+  );
 
   const setValue = useCallback(
     (action: SetStateAction<T>) => {
       const savedValue = localStorage.getItem(key);
-      const currentValue =
-        savedValue === null
-          ? initialValue
-          : parseValue(key, savedValue, isValid);
+      const currentValue = parseLocalStorageValue(
+        key,
+        savedValue,
+        initialValue,
+        isValid,
+        options,
+      );
       const nextValue = isUpdater(action) ? action(currentValue) : action;
 
       if (!isValid(nextValue)) {
@@ -69,7 +74,7 @@ export function useLocalStorageValue<T>(
       localStorage.setItem(key, serialized);
       window.dispatchEvent(new Event(eventName(key)));
     },
-    [initialValue, isValid, key],
+    [initialValue, isValid, key, options],
   );
 
   return [value, setValue] as const;
