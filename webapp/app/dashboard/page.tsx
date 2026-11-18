@@ -1,45 +1,14 @@
 "use client";
 
-import { useMemo } from "react";
 import { AgendaKaart } from "./_components/kaarten/AgendaKaart";
 import { AfvalKaart } from "./_components/kaarten/AfvalKaart";
 import { BoodschappenKaart } from "./_components/kaarten/BoodschappenKaart";
 import { BudgetKaart } from "./_components/kaarten/BudgetKaart";
 import { HuisgenotenKaart } from "./_components/kaarten/HuisgenotenKaart";
 import { MinutenKaart } from "./_components/kaarten/MinutenKaart";
-import { datumSleutel, startVanWeek } from "./_lib/datum";
-import {
-  bepaalBegroeting,
-  bepaalHoogsteDag,
-  berekenBudget,
-  berekenDagen,
-  berekenGrafiekDagen,
-  berekenWeekTotalen,
-  filterBijdragen,
-  selecteerAgendaItems,
-} from "./_lib/dashboard";
-import { useLocalStorageValue } from "@/hooks/useLocalStorageValue";
-import { useVandaag } from "./_hooks/useVandaag";
-import {
-  ACTIVITEITEN_OPSLAG,
-  BEGIN_ACTIVITEITEN,
-  isAgendaActiviteiten,
-} from "./activiteiten/data";
-import {
-  BOODSCHAPPEN_OPSLAG,
-  BEGIN_BOODSCHAPPEN_DATA,
-  isBoodschappenData,
-} from "./boodschappenlijst/data";
+import { useDashboardData } from "./_hooks/useDashboardData";
 import { HUISNAAM } from "./huisgenoten/data";
-import {
-  REGISTRATIES_OPSLAG,
-  WEEKDOEL_MINUTEN,
-} from "./takenlijst/data";
-import {
-  BEGIN_SENSOR,
-  isSensorData,
-  SENSOR_OPSLAG,
-} from "./afval/sensor";
+
 
 // ---------- 1. Installatie ----------
 // Plaats dit bestand in app/dashboard/page.tsx (of src/app/dashboard/page.tsx).
@@ -61,62 +30,9 @@ const HUIS = {
   gebruiker: "Marvin",
 };
 
-const GEEN_REGISTRATIES: unknown[] = [];
-const isLijst = (waarde: unknown): waarde is unknown[] =>
-  Array.isArray(waarde);
-
 export default function DashboardPage() {
-  const vandaag = useVandaag();
-  const [registraties] = useLocalStorageValue(
-    REGISTRATIES_OPSLAG,
-    GEEN_REGISTRATIES,
-    isLijst,
-    { onInvalid: "fallback" },
-  );
-  const [boodschappen] = useLocalStorageValue(
-    BOODSCHAPPEN_OPSLAG,
-    BEGIN_BOODSCHAPPEN_DATA,
-    isBoodschappenData,
-  );
-  const [activiteiten] = useLocalStorageValue(
-    ACTIVITEITEN_OPSLAG,
-    BEGIN_ACTIVITEITEN,
-    isAgendaActiviteiten,
-  );
-  const [sensor] = useLocalStorageValue(
-    SENSOR_OPSLAG,
-    BEGIN_SENSOR,
-    isSensorData,
-  );
+  const data = useDashboardData();
 
-  const bijdragen = useMemo(() => {
-    if (!vandaag) return [];
-
-    const maandag = startVanWeek(vandaag);
-    const zondag = new Date(maandag);
-    zondag.setDate(maandag.getDate() + 6);
-    return (
-      filterBijdragen(
-        registraties,
-        datumSleutel(maandag),
-        datumSleutel(zondag),
-      ) ?? []
-    );
-  }, [registraties, vandaag]);
-
-  // ---------- 6. Totalen voor de kaarten ----------
-  const { minuten, percentage } = berekenWeekTotalen(
-    bijdragen,
-    WEEKDOEL_MINUTEN,
-  );
-  const { uitgegeven, beschikbaar, productenNodig } = berekenBudget(boodschappen);
-  const agendaItems = selecteerAgendaItems(activiteiten);
-  const begroeting = bepaalBegroeting(vandaag);
-  const dagen = berekenDagen(vandaag, bijdragen);
-  const hoogsteDag = bepaalHoogsteDag(dagen);
-
-  const grafiekDagen = berekenGrafiekDagen(dagen, hoogsteDag);
-  const afvalBeschikbaar = 100 - sensor.vulgraad;
   // ---------- 7. Dashboard ----------
   return (
     <main className="mx-auto w-full max-w-[1500px] p-4 font-poppins text-[#032747] sm:p-6 lg:p-10">
@@ -127,7 +43,7 @@ export default function DashboardPage() {
             {HUISNAAM} · Samen thuis
           </p>
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            {begroeting}, {HUIS.gebruiker}
+            {data.begroeting}, {HUIS.gebruiker}
             <span className="text-[#FD7702]">.</span>
           </h1>
           <p className="mt-2 text-sm leading-6 text-[#6687b0]">
@@ -145,28 +61,28 @@ export default function DashboardPage() {
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         <BudgetKaart
           href={PAGINAS.boodschappen}
-          beschikbaar={beschikbaar}
-          uitgegeven={uitgegeven}
+          beschikbaar={data.beschikbaar}
+          uitgegeven={data.uitgegeven}
         />
         <MinutenKaart
           href={PAGINAS.taken}
-          minuten={minuten}
-          percentage={percentage}
-          weekdoel={WEEKDOEL_MINUTEN}
-          grafiekDagen={grafiekDagen}
+          minuten={data.minuten}
+          percentage={data.percentage}
+          weekdoel={data.weekdoel}
+          grafiekDagen={data.grafiekDagen}
         />
         <AgendaKaart
           href={PAGINAS.agenda}
-          agendaItems={agendaItems}
+          agendaItems={data.agendaItems}
         />
         <BoodschappenKaart
           href={PAGINAS.boodschappen}
-          productenNodig={productenNodig}
+          productenNodig={data.productenNodig}
         />
         <AfvalKaart
           href={PAGINAS.afval}
-          sensor={sensor}
-          beschikbaar={afvalBeschikbaar}
+          sensor={data.sensor}
+          beschikbaar={data.afvalBeschikbaar}
         />
         <HuisgenotenKaart
           href={PAGINAS.huisgenoten}
