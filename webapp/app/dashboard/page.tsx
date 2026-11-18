@@ -18,6 +18,16 @@ import {
 } from "./_components/DashboardElements";
 import { euro } from "./_lib/euro";
 import { datumSleutel, startVanWeek } from "./_lib/datum";
+import {
+  bepaalBegroeting,
+  bepaalHoogsteDag,
+  berekenBudget,
+  berekenDagen,
+  berekenWeekTotalen,
+  filterBijdragen,
+  selecteerAgendaItems,
+  type Bijdrage,
+} from "./_lib/dashboard";
 import { useLocalStorageValue } from "@/hooks/useLocalStorageValue";
 import {
   ACTIVITEITEN_OPSLAG,
@@ -60,8 +70,6 @@ const HUIS = {
   gebruiker: "Marvin",
 };
 
-type Bijdrage = { bewoner: string; minuten: number; datum: string };
-
 export default function DashboardPage() {
   const [vandaag, setVandaag] = useState<Date | null>(null);
   const [bijdragen, setBijdragen] = useState<Bijdrage[]>([]);
@@ -95,22 +103,13 @@ export default function DashboardPage() {
         const opgeslagen: unknown = JSON.parse(
           localStorage.getItem(REGISTRATIES_OPSLAG) ?? "[]",
         );
-        if (!Array.isArray(opgeslagen)) return;
-
-        setBijdragen(
-          opgeslagen.filter(
-            (item): item is Bijdrage =>
-              item !== null &&
-              typeof item === "object" &&
-              typeof item.bewoner === "string" &&
-              typeof item.minuten === "number" &&
-              Number.isFinite(item.minuten) &&
-              item.minuten > 0 &&
-              typeof item.datum === "string" &&
-              item.datum >= datumSleutel(maandag) &&
-              item.datum <= datumSleutel(zondag),
-          ),
+        const geldigeBijdragen = filterBijdragen(
+          opgeslagen,
+          datumSleutel(maandag),
+          datumSleutel(zondag),
         );
+        if (geldigeBijdragen === null) return;
+        setBijdragen(geldigeBijdragen);
       } catch {
         setBijdragen([]);
       }
@@ -126,45 +125,15 @@ export default function DashboardPage() {
   }, []);
 
   // ---------- 6. Totalen voor de kaarten ----------
-  const minuten = bijdragen.reduce((som, item) => som + item.minuten, 0);
-  const percentage = Math.round((minuten / WEEKDOEL_MINUTEN) * 100);
-  const ingelegd = boodschappen.bewoners.reduce(
-    (totaal, bewoner) => totaal + bewoner.betaaldBedrag,
-    0,
+  const { minuten, percentage } = berekenWeekTotalen(
+    bijdragen,
+    WEEKDOEL_MINUTEN,
   );
-  const uitgegeven = boodschappen.producten
-    .filter((product) => product.gekocht)
-    .reduce((totaal, product) => totaal + product.prijs, 0);
-  const beschikbaar = ingelegd - uitgegeven;
-  const productenNodig = boodschappen.producten.filter(
-    (product) => !product.gekocht,
-  );
-  const agendaItems = [...activiteiten]
-    .sort((a, b) => `${a.date}T${a.time}`.localeCompare(`${b.date}T${b.time}`))
-    .slice(0, 3);
-  const begroeting = !vandaag
-    ? "Welkom thuis"
-    : vandaag.getHours() < 12
-      ? "Goedemorgen"
-      : vandaag.getHours() < 18
-        ? "Goedemiddag"
-        : "Goedenavond";
-
-  const dagen = Array.from({ length: 7 }, (_, index) => {
-    const datum = vandaag ? startVanWeek(vandaag) : null;
-    if (datum) {
-      datum.setDate(datum.getDate() + index);
-    }
-    return {
-      naam: ["M", "D", "W", "D", "V", "Z", "Z"][index],
-      minuten: datum
-        ? bijdragen
-            .filter((item) => item.datum === datumSleutel(datum))
-            .reduce((som, item) => som + item.minuten, 0)
-        : 0,
-    };
-  });
-  const hoogsteDag = Math.max(30, ...dagen.map((dag) => dag.minuten));
+  const { uitgegeven, beschikbaar, productenNodig } = berekenBudget(boodschappen);
+  const agendaItems = selecteerAgendaItems(activiteiten);
+  const begroeting = bepaalBegroeting(vandaag);
+  const dagen = berekenDagen(vandaag, bijdragen);
+  const hoogsteDag = bepaalHoogsteDag(dagen);
 
   // ---------- 7. Dashboard ----------
   return (
