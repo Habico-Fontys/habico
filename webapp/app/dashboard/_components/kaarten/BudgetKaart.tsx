@@ -20,7 +20,7 @@ export function BudgetKaart({
     <DashboardKaart
       href={href}
       label="Bekijk het gezamenlijke boodschappenbudget"
-      className="min-h-[265px] bg-[linear-gradient(100deg,_var(--color-tangy-blue),_var(--color-habico-blue))] text-white"
+      className="min-h-[265px] bg-[linear-gradient(100deg,var(--color-tangy-blue),var(--color-habico-blue))] text-white"
     >
       <div
         aria-hidden="true"
@@ -32,7 +32,7 @@ export function BudgetKaart({
         </span>
         <Pijl donker />
       </div>
-      <p className="relative mt-5 text-5xl font-semibold tracking-tight">
+      <p className="relative mt-5 text-5xl font-semibold tracking-tight text-white">
         <OplopendGetal waarde={beschikbaar} bedrag />
       </p>
       <p className="mt-2 text-xs text-white/70">
