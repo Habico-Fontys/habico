@@ -1,23 +1,33 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
+import { useReducedMotion } from "./useReducedMotion";
 
 // Speel een binnenkomst één keer af zodra het element zichtbaar wordt.
 export function useBinnenkomst<T extends HTMLElement>(grafiek = false) {
   const ref = useRef<T>(null);
+  const animatie = useRef<Animation | undefined>(undefined);
+  const voorkeurActueel = useRef(false);
+  const voorkeurGewijzigd = useCallback((matches: boolean) => {
+    voorkeurActueel.current = matches;
+    if (matches) animatie.current?.cancel();
+  }, []);
+  const voorkeur = useReducedMotion(voorkeurGewijzigd);
+
+  useEffect(() => {
+    voorkeurActueel.current = voorkeur;
+  }, [voorkeur]);
 
   useEffect(() => {
     const element = ref.current;
-    const voorkeur = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (!element || voorkeur.matches || !("IntersectionObserver" in window)) return;
+    if (!element || voorkeurActueel.current || !("IntersectionObserver" in window)) return;
 
-    let animatie: Animation | undefined;
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) return;
         observer.disconnect();
-        if (voorkeur.matches) return;
-        animatie = element.animate(
+        if (voorkeurActueel.current) return;
+        animatie.current = element.animate(
           grafiek
             ? [{ transform: "scaleY(0)" }, { transform: "scaleY(1)" }]
             : [
@@ -31,14 +41,9 @@ export function useBinnenkomst<T extends HTMLElement>(grafiek = false) {
     );
     observer.observe(element);
 
-    function voorkeurGewijzigd() {
-      if (voorkeur.matches) animatie?.cancel();
-    }
-    voorkeur.addEventListener("change", voorkeurGewijzigd);
     return () => {
       observer.disconnect();
-      animatie?.cancel();
-      voorkeur.removeEventListener("change", voorkeurGewijzigd);
+      animatie.current?.cancel();
     };
   }, [grafiek]);
 

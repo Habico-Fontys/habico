@@ -17,6 +17,7 @@ import {
   Pijl,
 } from "./_components/DashboardElements";
 import { euro } from "./_lib/euro";
+import { datumSleutel, startVanWeek } from "./_lib/datum";
 import { useLocalStorageValue } from "@/hooks/useLocalStorageValue";
 import {
   ACTIVITEITEN_OPSLAG,
@@ -61,15 +62,6 @@ const HUIS = {
 
 type Bijdrage = { bewoner: string; minuten: number; datum: string };
 
-// ---------- 5. Datum en opgeslagen minuten ----------
-function datumSleutel(datum: Date) {
-  return [
-    datum.getFullYear(),
-    String(datum.getMonth() + 1).padStart(2, "0"),
-    String(datum.getDate()).padStart(2, "0"),
-  ].join("-");
-}
-
 export default function DashboardPage() {
   const [vandaag, setVandaag] = useState<Date | null>(null);
   const [bijdragen, setBijdragen] = useState<Bijdrage[]>([]);
@@ -95,8 +87,7 @@ export default function DashboardPage() {
       setVandaag(nu);
 
       // De week begint op maandag, gelijk aan de Takenlijst.
-      const maandag = new Date(nu);
-      maandag.setDate(nu.getDate() - ((nu.getDay() + 6) % 7));
+      const maandag = startVanWeek(nu);
       const zondag = new Date(maandag);
       zondag.setDate(maandag.getDate() + 6);
 
@@ -160,9 +151,9 @@ export default function DashboardPage() {
         : "Goedenavond";
 
   const dagen = Array.from({ length: 7 }, (_, index) => {
-    const datum = vandaag ? new Date(vandaag) : null;
+    const datum = vandaag ? startVanWeek(vandaag) : null;
     if (datum) {
-      datum.setDate(datum.getDate() - ((datum.getDay() + 6) % 7) + index);
+      datum.setDate(datum.getDate() + index);
     }
     return {
       naam: ["M", "D", "W", "D", "V", "Z", "Z"][index],

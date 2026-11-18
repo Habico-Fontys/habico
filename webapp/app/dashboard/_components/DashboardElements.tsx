@@ -1,31 +1,47 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { euro } from "../_lib/euro";
 import { useBinnenkomst } from "../_hooks/useBinnenkomst";
+import { useReducedMotion } from "../_hooks/useReducedMotion";
 
 // ---------- Animaties: cijfers en elementen komen rustig in beeld ----------
 // Geen extra pakket nodig. De browserinstelling voor minder beweging gaat voor.
 export function OplopendGetal({ waarde, bedrag = false }: { waarde: number; bedrag?: boolean }) {
   const element = useRef<HTMLSpanElement>(null);
   const huidig = useRef(0);
+  const frame = useRef(0);
+  const observer = useRef<IntersectionObserver | undefined>(undefined);
   const [getal, setGetal] = useState(0);
+  const voorkeurActueel = useRef(false);
+  const voorkeurGewijzigd = useCallback(
+    (matches: boolean) => {
+      voorkeurActueel.current = matches;
+      if (!matches) return;
+      observer.current?.disconnect();
+      cancelAnimationFrame(frame.current);
+      huidig.current = waarde;
+      setGetal(waarde);
+    },
+    [waarde],
+  );
+  const voorkeur = useReducedMotion(voorkeurGewijzigd);
 
   useEffect(() => {
-    const voorkeur = window.matchMedia("(prefers-reduced-motion: reduce)");
-    let frame = 0;
-    let observer: IntersectionObserver | undefined;
+    voorkeurActueel.current = voorkeur;
+  }, [voorkeur]);
 
+  useEffect(() => {
     function directTonen() {
-      cancelAnimationFrame(frame);
+      cancelAnimationFrame(frame.current);
       huidig.current = waarde;
       setGetal(waarde);
     }
 
     function starten() {
-      if (voorkeur.matches) return directTonen();
+      if (voorkeurActueel.current) return directTonen();
       const begin = huidig.current;
       const starttijd = performance.now();
 
@@ -35,34 +51,26 @@ export function OplopendGetal({ waarde, bedrag = false }: { waarde: number; bedr
         const soepel = 1 - Math.pow(1 - voortgang, 3);
         huidig.current = begin + (waarde - begin) * soepel;
         setGetal(huidig.current);
-        if (voortgang < 1) frame = requestAnimationFrame(stap);
+        if (voortgang < 1) frame.current = requestAnimationFrame(stap);
       }
-      frame = requestAnimationFrame(stap);
+      frame.current = requestAnimationFrame(stap);
     }
 
-    if (voorkeur.matches || !("IntersectionObserver" in window)) {
+    if (voorkeurActueel.current || !("IntersectionObserver" in window)) {
       directTonen();
     } else {
-      observer = new IntersectionObserver(([entry]) => {
+      observer.current = new IntersectionObserver(([entry]) => {
         if (entry.isIntersecting) {
-          observer?.disconnect();
+          observer.current?.disconnect();
           starten();
         }
       });
-      if (element.current) observer.observe(element.current);
+      if (element.current) observer.current.observe(element.current);
     }
 
-    function voorkeurGewijzigd() {
-      if (voorkeur.matches) {
-        observer?.disconnect();
-        directTonen();
-      }
-    }
-    voorkeur.addEventListener("change", voorkeurGewijzigd);
     return () => {
-      observer?.disconnect();
-      cancelAnimationFrame(frame);
-      voorkeur.removeEventListener("change", voorkeurGewijzigd);
+      observer.current?.disconnect();
+      cancelAnimationFrame(frame.current);
     };
   }, [waarde]);
 
