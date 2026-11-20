@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { ArrowUpRight, Plus, ShoppingCart, X } from "lucide-react";
+import Image from "next/image";
 
 type Supermarkt = {
   id: string;

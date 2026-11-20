@@ -6,6 +6,7 @@ export type AgendaActiviteit = {
   description: string;
   date: string;
   time: string;
+  endTime?: string;
   location: string;
   organizer: string;
   type: ActiviteitSoort;
@@ -92,6 +93,9 @@ export function isAgendaActiviteiten(
         /^\d{4}-\d{2}-\d{2}$/.test(activity.date) &&
         typeof activity.time === "string" &&
         /^([01]\d|2[0-3]):[0-5]\d$/.test(activity.time) &&
+        (activity.endTime === undefined ||
+          (typeof activity.endTime === "string" &&
+            /^([01]\d|2[0-3]):[0-5]\d$/.test(activity.endTime))) &&
         typeof activity.location === "string" &&
         typeof activity.organizer === "string" &&
         (activity.type === "Samen doen" ||

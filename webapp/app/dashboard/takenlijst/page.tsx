@@ -184,6 +184,7 @@ export default function TakenlijstPage() {
     if (!geladen) return;
     try {
       localStorage.setItem(OPSLAG, JSON.stringify(registraties));
+      window.dispatchEvent(new Event(`habico:local-storage:${OPSLAG}`));
     } catch {
       setMelding(
         "Opslaan op dit apparaat lukt niet. Houd deze pagina open om je invoer te behouden.",
@@ -302,13 +303,15 @@ export default function TakenlijstPage() {
             Jullie inzet, overzichtelijk op één plek.
           </p>
         </div>
-        <button
-          disabled={!geladen}
-          onClick={() => openen()}
-          className={`${knop} bg-[#1D38FF] text-white hover:bg-[#1429ce]`}
-        >
-          <Plus size={18} /> Minuten registreren
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            disabled={!geladen}
+            onClick={() => openen()}
+            className={`${knop} bg-[#1D38FF] text-white hover:bg-[#1429ce]`}
+          >
+            <Plus size={18} /> Minuten registreren
+          </button>
+        </div>
       </header>
       {/* Bevestigingen en meldingen over opslaan. */}
       <p role="status" className="mb-3 text-sm text-[#6687b0]">

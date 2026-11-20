@@ -20,7 +20,7 @@ import { HUISNAAM } from "./huisgenoten/data";
 const PAGINAS = {
   taken: "/dashboard/takenlijst",
   boodschappen: "/dashboard/boodschappenlijst",
-  agenda: "/dashboard/activiteiten",
+  agenda: "/dashboard/kalender",
   huisgenoten: "/dashboard/huisgenoten",
   afval: "/dashboard/afval",
 };
