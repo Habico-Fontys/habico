@@ -11,6 +11,7 @@ import {
   Plus,
   RotateCcw,
   ShoppingCart,
+  PartyPopper,
   User,
   Users,
   ListChecks,
@@ -22,8 +23,9 @@ type NavItem = { id: string; href: string; label: string; icon: LucideIcon };
 
 const alleItems: NavItem[] = [
   { id: "overzicht", href: "/dashboard", label: "Overzicht", icon: LayoutDashboard },
+  { id: "kalender", href: "/dashboard/kalender", label: "Agenda", icon: CalendarDays },
   { id: "boodschappen", href: "/dashboard/boodschappenlijst", label: "Boodschappen", icon: ShoppingCart },
-  { id: "activiteiten", href: "/dashboard/activiteiten", label: "Activiteiten", icon: CalendarDays },
+  { id: "activiteiten", href: "/dashboard/activiteiten", label: "Activiteiten", icon: PartyPopper },
   { id: "huisgenoten", href: "/dashboard/huisgenoten", label: "Huisgenoten", icon: Users },
   { id: "takenlijst", href: "/dashboard/takenlijst", label: "Takenlijst", icon: ListChecks },
   { id: "profiel", href: "/dashboard/profiel", label: "Profiel", icon: User },

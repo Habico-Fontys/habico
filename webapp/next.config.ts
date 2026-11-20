@@ -11,6 +11,10 @@ const nextConfig: NextConfig = {
         pathname: "/habico-logo-transparent-v2.png",
         search: "",
       },
+      {
+        pathname: "/habico-icon-transparent.png",
+        search: "",
+      },
     ],
   },
   turbopack: {

@@ -4,14 +4,15 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
-import { ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, PartyPopper, Trash2 } from 'lucide-react';
 import { Logo } from '@/components/Logo';
 import SidebarProfielLink from '@/components/SidebarProfielLink'; // NIEUW
 import { useHuidigHuis } from '@/components/HuidigHuisBadge';
 
 const items = [
   { href: '/dashboard', label: 'Overzicht', icon: 'grid' },
-  { href: '/dashboard/activiteiten', label: 'Activiteiten', icon: 'activity' },
+  { href: '/dashboard/kalender', label: 'Agenda', icon: 'calendar-days' },
+  { href: '/dashboard/activiteiten', label: 'Activiteiten', icon: 'party-popper' },
   { href: '/dashboard/boodschappenlijst', label: 'Boodschappen', icon: 'shoppingcart' },
   { href: '/dashboard/takenlijst', label: 'Takenlijst', icon: 'listchecks' },
   { href: '/dashboard/afval', label: 'Afval', icon: 'trash' },
@@ -19,10 +20,9 @@ const items = [
 
 const paths: Record<string, string> = {
   grid: 'M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z',
+  'calendar-days': 'M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2ZM7 14h.01M12 14h.01M17 14h.01M7 18h.01M12 18h.01',
   users:
     'M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2m16 0v-2a4 4 0 0 0-3-3.87M14 3.13a4 4 0 0 1 0 7.75M14 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z',
-  activity:
-    'M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5',
   shoppingcart:
     'M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z',
   listchecks: 'M13 6h8M13 12h8M13 18h8M3 7l2 2 4-4M3 17l2 2 4-4',
@@ -241,6 +241,12 @@ export function Sidebar() {
             >
               {item.icon === 'trash' ? (
                 <Trash2
+                  aria-hidden="true"
+                  className={`size-4 shrink-0 ${active ? 'text-tangy-blue' : undefined}`}
+                  strokeWidth={1.8}
+                />
+              ) : item.icon === 'party-popper' ? (
+                <PartyPopper
                   aria-hidden="true"
                   className={`size-4 shrink-0 ${active ? 'text-tangy-blue' : undefined}`}
                   strokeWidth={1.8}

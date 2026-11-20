@@ -205,6 +205,7 @@ export default function AfvalPage() {
     if (!geladen) return;
     try {
       localStorage.setItem(OPSLAG, JSON.stringify(gegevens));
+      window.dispatchEvent(new Event(`habico:local-storage:${OPSLAG}`));
       setOpslagFout("");
     } catch {
       setOpslagFout(
