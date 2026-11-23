@@ -42,3 +42,7 @@ codegen-units = 1     # LLVM can perform better optimizations using a single thr
 debug         = 2     # prefer slower builds but better debugging experience
 lto           = 'fat'
 opt-level     = 's'
+
+[build-dependencies]
+bindgen = "0.73.2"
+cc = "1.11.3"
