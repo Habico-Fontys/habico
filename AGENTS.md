@@ -5,6 +5,7 @@
 - `webapp/` — Next.js web app. Run npm commands from this folder.
 - `hardware/` — Embedded Rust firmware for the ESP32-C6, one Cargo project per folder.
   - `test-load-cell/` — Prototype that reads a load cell through an HX711 and logs grams over RTT.
+  - `test-tof-sensor/` — Prototype for the VL53L7CX ToF sensor. Vendors ST's C ULD driver in `vl53l7cx/`, compiled with clang and bound with bindgen in `build.rs` (needs `clang`/libclang on the host); the platform layer (I2C, delays) is implemented in Rust in `src/vl53l7cx.rs`.
 
 ## webapp
 
