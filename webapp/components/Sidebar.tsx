@@ -289,10 +289,10 @@ export function Sidebar() {
       >
         <div
           aria-hidden="true"
-          className="bg-habico-orange absolute -top-16 -left-12 size-40 rounded-full"
+          className="bg-habico-orange absolute -top-18 -left-12 size-40 rounded-full"
         />
         <div className="relative z-10">
-          <span className="bg-habico-white/15 text-habico-white grid size-8 place-items-center rounded-lg">
+          <span className="bg-habico-white/15 text-habico-white grid size-8 place-items-center rounded-lg" margin-bottom="2">
             ✳
           </span>
           <p className="mt-3 text-sm font-bold text-habico-white">Samen sterk.</p>
