@@ -92,11 +92,11 @@ export default function AanbiedingenBanner() {
   return (
     <section
       aria-label="Supermarktaanbiedingen"
-      className="relative mt-8 overflow-hidden rounded-3xl bg-fire-orange p-4 text-habico-navy-dark sm:p-6 lg:p-8"
+      className="relative mt-8 overflow-hidden rounded-3xl bg-habico-orange p-4 text-habico-navy-dark sm:p-6 lg:p-8"
     >
       {/* Decoratieve cirkels */}
-      <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-16 size-64 rounded-full bg-habico-orange-red/40" />
-      <div aria-hidden="true" className="pointer-events-none absolute -bottom-24 left-1/3 size-56 rounded-full bg-habico-orange/50" />
+      <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-16 size-64 rounded-full bg-habico-orange-red /40" />
+      <div aria-hidden="true" className="pointer-events-none absolute -bottom-24 left-1/3 size-56 rounded-full bg-habico-orange-red /50" />
 
       <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center">
         {/* Links: huisje met winkelwagen en uitleg */}
@@ -122,7 +122,7 @@ export default function AanbiedingenBanner() {
               Supermarktacties
             </p>
             <h2 className="mt-1 text-xl font-bold sm:text-2xl">Slim samen inkopen</h2>
-            <p className="mt-1 text-sm">
+            <p className="mt-1 text-sm" style={{ marginLeft: "15px" }}>
               Bekijk de aanbiedingen voordat je gaat en zet de beste deals op de lijst.
             </p>
           </div>
