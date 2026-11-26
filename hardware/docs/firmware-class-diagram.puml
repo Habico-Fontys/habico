@@ -1,0 +1,234 @@
+@startuml firmware-class-diagram
+title Habico bin: firmware and API connection
+
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
+hide empty members
+allowmixing
+
+package "app" {
+  class main <<embassy_executor::main>> {
+    + async main(spawner: Spawner)
+  }
+
+  class Config <<const>> {
+    + MEASURE_INTERVAL = Duration::from_secs(1)
+    + LOG_INTERVAL = Duration::from_secs(60)
+    + API_URL
+    + DEVICE_ID
+    + DEVICE_TOKEN
+    + WIFI_SSID
+    + WIFI_PASSWORD
+    + BIN_DEPTH_MM
+    + COUNTS_PER_GRAM = 41.8
+  }
+
+  enum SensorError {
+    ScaleTimeout
+    TofI2c(u8)
+    TofNotFound
+  }
+}
+
+package "weight" {
+  class scale_task <<task>> {
+    + async scale_task(sensor: impl WeightSensor)
+    --
+    Ticker::every(MEASURE_INTERVAL)
+  }
+
+  class WEIGHT <<static Signal>> {
+    Signal<CriticalSectionRawMutex, Result<f32, SensorError>>
+  }
+
+  interface WeightSensor {
+    + async tare(samples: u32): Result<(), SensorError>
+    + async weight_grams(): Result<f32, SensorError>
+  }
+
+  class Scale {
+    - hx711: Hx711
+    - tare: i32
+    - counts_per_gram: f32
+  }
+
+  class Hx711 <<test-load-cell>> {
+    - dt: Input
+    - sck: Output
+    - gain: Gain
+    + new(dt, sck, gain): Hx711
+    + async init(): Result<(), Timeout>
+    + async read_raw(): Result<i32, Timeout>
+    + async read_average(samples: u32): Result<i32, Timeout>
+  }
+
+  enum Gain {
+    ChannelA128
+    ChannelB32
+    ChannelA64
+  }
+}
+
+package "fill level" {
+  class fill_level_task <<task>> {
+    + async fill_level_task(sensor: impl FillLevelSensor)
+    --
+    Ticker::every(MEASURE_INTERVAL)
+  }
+
+  class FILL_LEVEL <<static Signal>> {
+    Signal<CriticalSectionRawMutex, Result<FillLevel, SensorError>>
+  }
+
+  interface FillLevelSensor {
+    + async read(): Result<FillLevel, SensorError>
+  }
+
+  class TofFillLevelSensor {
+    - tof: Vl53l7cx
+    - bin_depth_mm: u16
+  }
+
+  class FillLevel <<struct>> {
+    + percent: u8
+    + lid_open: bool
+    + distances: DistanceMatrix
+  }
+
+  class Vl53l7cx <<test-tof-sensor>> {
+    - dev: VL53L7CX_Configuration
+    + new(bus: &mut I2c<Blocking>, address: u8): Vl53l7cx
+    + is_alive(): Result<bool, u8>
+    + start_ranging(): Result<(), u8>
+    + data_ready(): Result<bool, u8>
+    + read_ranging_data(): Result<DistanceMatrix, u8>
+  }
+
+  class DistanceMatrix <<struct>> {
+    + zones_mm: [[u16; 8]; 8]
+    + status: [[u8; 8]; 8]
+  }
+}
+
+package "logging" {
+  class logging_task <<task>> {
+    + async logging_task(sink: impl MeasurementSink)
+    --
+    Ticker::every(LOG_INTERVAL)
+    reads the latest value with try_take()
+  }
+
+  class Measurement <<struct, Serialize>> {
+    + device_id: &str
+    + firmware_version: &str
+    + weight_grams: Option<f32>
+    + fill_level_percent: Option<u8>
+    + lid_open: Option<bool>
+    + distances_mm: Option<[[u16; 8]; 8]>
+    + wifi_rssi_dbm: i8
+    + uptime_s: u32
+    + errors: heapless::Vec<SensorError, 2>
+  }
+
+  interface MeasurementSink {
+    + async send(measurement: &Measurement): Result<(), SendError>
+  }
+
+  class ApiClient {
+    - stack: Stack
+    - base_url: &str
+    - device_token: &str
+    - rx_buffer: [u8; 1024]
+    --
+    reqwless HttpClient over embassy-net TcpClient + TLS
+  }
+
+  enum SendError {
+    NetworkDown
+    Timeout
+    Serialize
+    HttpStatus(u16)
+    Unauthorized
+  }
+
+  class wifi_task <<task>> {
+    + async wifi_task(controller: WifiController)
+    --
+    reconnects, publishes RSSI to WIFI_RSSI
+  }
+
+  class net_task <<task>> {
+    + async net_task(runner: Runner<WifiDevice>)
+  }
+
+  class WIFI_RSSI <<static Signal>> {
+    Signal<CriticalSectionRawMutex, i8>
+  }
+
+  class NET_STACK <<static StaticCell>> {
+    StaticCell<StackResources<N>>
+  }
+}
+
+component "Webapp" as Webapp
+
+main ..> scale_task : spawns
+main ..> fill_level_task : spawns
+main ..> logging_task : spawns
+main ..> wifi_task : spawns
+main ..> net_task : spawns
+main ..> NET_STACK
+main ..> Config
+
+scale_task --> WeightSensor
+WeightSensor <|.. Scale
+Scale *-- Hx711
+Hx711 --> Gain
+scale_task ..> WEIGHT : signal()
+
+fill_level_task --> FillLevelSensor
+FillLevelSensor <|.. TofFillLevelSensor
+TofFillLevelSensor *-- Vl53l7cx
+TofFillLevelSensor ..> FillLevel : creates
+FillLevel *-- DistanceMatrix
+Vl53l7cx ..> DistanceMatrix : creates
+fill_level_task ..> FILL_LEVEL : signal()
+
+WEIGHT ..> logging_task : try_take()
+FILL_LEVEL ..> logging_task : try_take()
+WIFI_RSSI ..> logging_task : try_take()
+wifi_task ..> WIFI_RSSI : signal()
+
+logging_task ..> Measurement : creates every minute
+logging_task --> MeasurementSink
+MeasurementSink <|.. ApiClient
+MeasurementSink ..> SendError
+Measurement --> SensorError
+
+ApiClient ..> net_task : uses Stack
+
+ApiClient ..> Webapp : HTTPS POST /api/bin/measurements\nAuthorization: Bearer <token>\nevery 60 s
+
+note bottom of Vl53l7cx
+  ST's C driver calls the platform layer
+  synchronously, so I2C stays blocking.
+  fill_level_task polls data_ready() and
+  yields with Timer::after between polls.
+end note
+
+note bottom of Measurement
+  Example JSON body (serde-json-core):
+  {
+    "deviceId": "habico-01",
+    "firmwareVersion": "0.1.0",
+    "weightGrams": 1240,
+    "fillLevelPercent": 67,
+    "lidOpen": false,
+    "distancesMm": [[412, 405, ...8 values], ...8 rows],
+    "wifiRssiDbm": -61,
+    "uptimeS": 86400,
+    "errors": []
+  }
+end note
+
+@enduml
