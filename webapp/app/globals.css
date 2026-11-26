@@ -50,6 +50,182 @@
   --font-mono: var(--font-geist-mono);
 }
 
+[data-dashboard-theme="dark"] {
+  color-scheme: dark;
+  --paper: #101827;
+  --ink: #e6edf6;
+  --muted: #a4b1c2;
+  --blue: #91a8ff;
+  --line: #39475a;
+  --color-habico-landing: #101827;
+  --color-habico-grey: #526176;
+  --color-habico-soft-blue: #25324a;
+  --color-habico-blue: #8da6ff;
+  --color-habico-navy: #e6edf6;
+  --color-habico-navy-dark: #f1f5f9;
+  --color-dashboard-ink: #e6edf6;
+  --color-dashboard-muted: #a4b1c2;
+  --color-dashboard-surface: #182334;
+  --color-dashboard-border: #39475a;
+  --color-dashboard-soft-surface: #202c3e;
+  --color-dashboard-arrow-surface: #263248;
+  --color-dashboard-pale-blue: #25324a;
+  --color-dashboard-stack-blue: #303e59;
+  --color-dashboard-dark: #0b111b;
+  --color-dashboard-avatar-peach: #533725;
+  --color-dashboard-avatar-brown: #ffd0a6;
+  --color-dashboard-avatar-blue: #293853;
+  background-color: var(--color-habico-landing);
+  color: var(--ink);
+}
+
+[data-dashboard-theme="dark"] [class~="bg-white"],
+[data-dashboard-theme="dark"] [class~="bg-habico-white"],
+[data-dashboard-theme="dark"] [class~="bg-dashboard-surface"],
+[data-dashboard-theme="dark"] [class~="bg-[#fcfaf7]"] {
+  background-color: var(--color-dashboard-surface);
+}
+
+[data-dashboard-theme="dark"] [class~="bg-white/60"] {
+  background-color: rgb(24 35 52 / 60%);
+}
+
+[data-dashboard-theme="dark"] [class~="bg-white/70"] {
+  background-color: rgb(24 35 52 / 70%);
+}
+
+[data-dashboard-theme="dark"] [class~="bg-white/80"] {
+  background-color: rgb(24 35 52 / 80%);
+}
+
+[data-dashboard-theme="dark"] [class~="bg-white"][class~="text-tangy-blue"],
+[data-dashboard-theme="dark"] [class~="bg-white"][class~="text-[#1D38FF]"] {
+  background-color: #fff;
+}
+
+[data-dashboard-theme="dark"] img[alt="Habico"] {
+  filter: brightness(0) invert(1);
+}
+
+[data-dashboard-theme="dark"] [class~="bg-[#f0f1f6]"],
+[data-dashboard-theme="dark"] [class~="bg-dashboard-soft-surface"],
+[data-dashboard-theme="dark"] [class~="bg-[#eeeff1]"],
+[data-dashboard-theme="dark"] [class~="bg-[#eeeff5]"],
+[data-dashboard-theme="dark"] [class~="bg-[#dedfe3]"] {
+  background-color: var(--color-dashboard-soft-surface);
+}
+
+[data-dashboard-theme="dark"] [class~="bg-[#e9eaff]"],
+[data-dashboard-theme="dark"] [class~="bg-[#dce2ff]"],
+[data-dashboard-theme="dark"] [class~="bg-[#dfe2ff]"],
+[data-dashboard-theme="dark"] [class~="bg-[#cbd2ff]"],
+[data-dashboard-theme="dark"] [class~="bg-dashboard-pale-blue"],
+[data-dashboard-theme="dark"] [class~="bg-habico-soft-blue"] {
+  background-color: var(--color-dashboard-pale-blue);
+}
+
+[data-dashboard-theme="dark"] [class~="bg-dashboard-arrow-surface"] {
+  background-color: var(--color-dashboard-arrow-surface);
+}
+
+[data-dashboard-theme="dark"] [class~="bg-dashboard-stack-blue"] {
+  background-color: var(--color-dashboard-stack-blue);
+}
+
+[data-dashboard-theme="dark"] [class~="bg-dashboard-dark"] {
+  background-color: #0b111b;
+}
+
+[data-dashboard-theme="dark"] [class~="bg-dashboard-avatar-peach"] {
+  background-color: var(--color-dashboard-avatar-peach);
+}
+
+[data-dashboard-theme="dark"] [class~="bg-dashboard-avatar-blue"] {
+  background-color: var(--color-dashboard-avatar-blue);
+}
+
+[data-dashboard-theme="dark"] [class~="hover:bg-[#e9eaff]"]:hover,
+[data-dashboard-theme="dark"] [class~="hover:bg-[#dce2ff]"]:hover {
+  background-color: var(--color-dashboard-pale-blue);
+}
+
+[data-dashboard-theme="dark"] [class~="bg-[#fff0df]"],
+[data-dashboard-theme="dark"] [class~="bg-[#ffe1be]"],
+[data-dashboard-theme="dark"] [class~="bg-[#ffe6c9]"] {
+  background-color: #493426;
+}
+
+[data-dashboard-theme="dark"] [class~="text-[#032747]"] {
+  color: var(--color-dashboard-ink);
+}
+
+[data-dashboard-theme="dark"] [class~="text-dashboard-ink"] {
+  color: var(--color-dashboard-ink);
+}
+
+[data-dashboard-theme="dark"] [class~="text-dashboard-muted"] {
+  color: var(--color-dashboard-muted);
+}
+
+[data-dashboard-theme="dark"] [class~="text-dashboard-avatar-brown"] {
+  color: var(--color-dashboard-avatar-brown);
+}
+
+[data-dashboard-theme="dark"] [class~="text-[#6687b0]"] {
+  color: var(--color-dashboard-muted);
+}
+
+[data-dashboard-theme="dark"] [class~="text-[#853b00]"],
+[data-dashboard-theme="dark"] [class~="text-[#a94700]"],
+[data-dashboard-theme="dark"] [class~="text-[#a46a2d]"],
+[data-dashboard-theme="dark"] [class~="text-[#bc5500]"],
+[data-dashboard-theme="dark"] [class~="text-orange-800"] {
+  color: #ffc28f;
+}
+
+[data-dashboard-theme="dark"] [class~="border-[#e3e2e0]"],
+[data-dashboard-theme="dark"] [class~="border-dashboard-border"],
+[data-dashboard-theme="dark"] [class~="border-[#dedfe3]"],
+[data-dashboard-theme="dark"] [class~="border-[#d9d9d9]"] {
+  border-color: var(--color-dashboard-border);
+}
+
+[data-dashboard-theme="dark"] [stroke="#eeeff1"] {
+  stroke: var(--color-dashboard-border);
+}
+
+[data-dashboard-theme="dark"] [class~="bg-emerald-50"],
+[data-dashboard-theme="dark"] [class~="bg-emerald-50/70"] {
+  background-color: #173c36;
+}
+
+[data-dashboard-theme="dark"] [class~="bg-orange-50"],
+[data-dashboard-theme="dark"] [class~="bg-orange-50/60"] {
+  background-color: #493426;
+}
+
+[data-dashboard-theme="dark"] [class~="bg-red-50"] {
+  background-color: #482b36;
+}
+
+[data-dashboard-theme="dark"] [class~="text-emerald-700"] {
+  color: #7ee0b0;
+}
+
+[data-dashboard-theme="dark"] [class~="text-red-700"] {
+  color: #ff9aab;
+}
+
+[data-dashboard-theme="dark"] [class~="text-orange-800/70"],
+[data-dashboard-theme="dark"] [class~="text-orange-800/80"] {
+  color: #ffc28f;
+}
+
+[data-dashboard-theme="dark"] [class~="border-orange-200"],
+[data-dashboard-theme="dark"] [class~="border-emerald-200"] {
+  border-color: var(--color-dashboard-border);
+}
+
 * {
   box-sizing: border-box;
 }
