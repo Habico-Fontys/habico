@@ -189,6 +189,12 @@ describe("dashboard calculations", () => {
       { naam: "M", minuten: 0, hoogte: 5, titel: "Maandag: 0 min" },
       { naam: "D", minuten: 15, hoogte: 50, titel: "Dinsdag: 15 min" },
     ]);
+    expect(
+      berekenDagen(null, [], "en").map(({ naam }) => naam),
+    ).toEqual(["M", "T", "W", "T", "F", "S", "S"]);
+    expect(
+      berekenGrafiekDagen([{ naam: "M", minuten: 0 }], 30, "en")[0].titel,
+    ).toBe("Monday: 0 min");
   });
 });
 

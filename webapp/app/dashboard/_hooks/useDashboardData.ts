@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { useLocalStorageValue } from "@/hooks/useLocalStorageValue";
+import { useLocalization } from "@/components/LocalizationProvider";
 import { datumSleutel, startVanWeek } from "../_lib/datum";
 import {
   bepaalBegroeting,
@@ -58,6 +59,7 @@ export type DashboardData = {
 
 export function useDashboardData(): DashboardData {
   const vandaag = useVandaag();
+  const { locale } = useLocalization();
   const [registraties] = useLocalStorageValue(
     REGISTRATIES_OPSLAG,
     GEEN_REGISTRATIES,
@@ -103,9 +105,9 @@ export function useDashboardData(): DashboardData {
   const { uitgegeven, beschikbaar, productenNodig } = berekenBudget(boodschappen);
   const agendaItems = selecteerAgendaItems(activiteiten);
   const begroeting = bepaalBegroeting(vandaag);
-  const dagen = berekenDagen(vandaag, bijdragen);
+  const dagen = berekenDagen(vandaag, bijdragen, locale);
   const hoogsteDag = bepaalHoogsteDag(dagen);
-  const grafiekDagen = berekenGrafiekDagen(dagen, hoogsteDag);
+  const grafiekDagen = berekenGrafiekDagen(dagen, hoogsteDag, locale);
   const afvalBeschikbaar = 100 - sensor.vulgraad;
 
   return {
