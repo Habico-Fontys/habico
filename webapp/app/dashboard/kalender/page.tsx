@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useLocalStorageValue } from '@/hooks/useLocalStorageValue';
 import { useProfiel } from '@/components/ProfielProvider';
+import { useLocalization } from '@/components/LocalizationProvider';
 import {
   ACTIVITEITEN_OPSLAG,
   BEGIN_ACTIVITEITEN,
@@ -153,10 +154,10 @@ function addDays(date: Date, amount: number) {
   return result;
 }
 
-function weekTitle(start: Date) {
+function weekTitle(start: Date, locale: string) {
   const end = addDays(start, 6);
-  const startText = start.toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' });
-  const endText = end.toLocaleDateString('nl-NL', { day: 'numeric', month: 'short', year: 'numeric' });
+  const startText = start.toLocaleDateString(locale, { day: 'numeric', month: 'short' });
+  const endText = end.toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' });
   return `${startText} — ${endText}`;
 }
 
@@ -167,6 +168,7 @@ function taskDate(task: Taak, week: Date) {
 export default function CalendarPage() {
   const vandaag = useVandaag();
   const { profiel } = useProfiel();
+  const { locale } = useLocalization();
   const userName = profiel.voornaam.trim();
   const [weekOffset, setWeekOffset] = useState(0);
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>('Alles');
@@ -321,7 +323,7 @@ export default function CalendarPage() {
                 setFilter(item);
                 setSelectedId(null);
               }}
-              className={`inline-flex min-h-10 items-center gap-2 rounded-full border px-3 text-xs font-bold transition ${
+              className={`dashboard-filter-button inline-flex min-h-10 items-center gap-2 rounded-full border px-3 text-xs font-bold transition ${
                 filter === item
                   ? 'border-habico-navy-dark bg-habico-navy-dark text-habico-white'
                   : 'border-habico-grey/80 bg-habico-white text-habico-blue/70 hover:border-tangy-blue hover:text-tangy-blue'
@@ -385,7 +387,7 @@ export default function CalendarPage() {
               </button>
             </div>
             <h2 className="text-habico-navy-dark text-base font-extrabold capitalize sm:text-lg">
-              {weekTitle(week)}
+              {weekTitle(week, locale)}
             </h2>
             <button
               type="button"
@@ -404,7 +406,7 @@ export default function CalendarPage() {
                   .filter((event) => event.date === key)
                   .sort((a, b) => a.time.localeCompare(b.time));
                 const isToday = key === todayKey;
-                const dayName = day.toLocaleDateString('nl-NL', { weekday: 'short' }).replace('.', '');
+                const dayName = day.toLocaleDateString(locale, { weekday: 'short' }).replace('.', '');
 
                 return (
                   <section
@@ -467,7 +469,7 @@ export default function CalendarPage() {
                         onClick={() =>
                           setAddDate({
                             date: key,
-                            label: atNoon(key).toLocaleDateString('nl-NL', {
+                            label: atNoon(key).toLocaleDateString(locale, {
                               weekday: 'long',
                               day: 'numeric',
                               month: 'long',
@@ -522,7 +524,7 @@ export default function CalendarPage() {
               <div className="mt-5 space-y-3 text-xs text-habico-blue/70">
                 <p className="flex items-center gap-2">
                   <CalendarDays size={16} className="text-habico-navy" aria-hidden="true" />
-                  {atNoon(selectedEvent.date).toLocaleDateString('nl-NL', {
+                  {atNoon(selectedEvent.date).toLocaleDateString(locale, {
                     weekday: 'long',
                     day: 'numeric',
                     month: 'long',
@@ -597,7 +599,7 @@ export default function CalendarPage() {
                         {event.title}
                       </span>
                       <span className="mt-0.5 block text-[9px] text-habico-blue/55">
-                        {atNoon(event.date).toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' })} · {eventTime(event)}
+                        {atNoon(event.date).toLocaleDateString(locale, { day: 'numeric', month: 'short' })} · {eventTime(event)}
                       </span>
                     </span>
                   </button>

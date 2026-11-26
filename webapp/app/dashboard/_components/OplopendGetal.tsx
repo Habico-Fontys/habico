@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { euro } from "../_lib/euro";
 import { useReducedMotion } from "../_hooks/useReducedMotion";
+import { useLocalization } from "@/components/LocalizationProvider";
 
 // ---------- Animaties: cijfers en elementen komen rustig in beeld ----------
 // Geen extra pakket nodig. De browserinstelling voor minder beweging gaat voor.
@@ -13,6 +14,7 @@ export function OplopendGetal({ waarde, bedrag = false }: { waarde: number; bedr
   const observer = useRef<IntersectionObserver | undefined>(undefined);
   const [getal, setGetal] = useState(0);
   const voorkeur = useReducedMotion();
+  const { locale } = useLocalization();
   const voorkeurActueel = useRef(false);
 
 
@@ -69,9 +71,9 @@ export function OplopendGetal({ waarde, bedrag = false }: { waarde: number; bedr
     <span ref={element} className="tabular-nums">
       {/* Screenreaders lezen alleen de uiteindelijke waarde. */}
       <span aria-hidden="true">
-        {bedrag ? euro(voorkeur ? waarde : getal) : Math.round(voorkeur ? waarde : getal)}
+        {bedrag ? euro(voorkeur ? waarde : getal, locale) : Math.round(voorkeur ? waarde : getal)}
       </span>
-      <span className="sr-only">{bedrag ? euro(waarde) : waarde}</span>
+      <span className="sr-only">{bedrag ? euro(waarde, locale) : waarde}</span>
     </span>
   );
 }

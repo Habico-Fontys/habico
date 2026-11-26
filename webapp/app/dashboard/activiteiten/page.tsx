@@ -14,6 +14,7 @@ import {
   X,
 } from 'lucide-react';
 import { useProfiel } from '@/components/ProfielProvider';
+import { useLocalization } from '@/components/LocalizationProvider';
 import { useLocalStorageValue } from '@/hooks/useLocalStorageValue';
 import {
   ACTIVITEITEN_OPSLAG,
@@ -73,10 +74,10 @@ function addDays(date: Date, amount: number) {
   return result;
 }
 
-function weekTitle(start: Date) {
+function weekTitle(start: Date, locale: string) {
   const end = addDays(start, 6);
-  const startText = start.toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' });
-  const endText = end.toLocaleDateString('nl-NL', { day: 'numeric', month: 'short', year: 'numeric' });
+  const startText = start.toLocaleDateString(locale, { day: 'numeric', month: 'short' });
+  const endText = end.toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' });
   return `${startText} — ${endText}`;
 }
 
@@ -100,6 +101,7 @@ function emptyDraft(date = ''): ActivityDraft {
 
 export default function ActivitiesPage() {
   const { profiel } = useProfiel();
+  const { locale } = useLocalization();
   const vandaag = useVandaag();
   const userName = profiel.voornaam.trim() || 'Marvin';
   const [activities, setActivities] = useLocalStorageValue(
@@ -291,7 +293,7 @@ export default function ActivitiesPage() {
                   <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] font-semibold text-habico-blue/60">
                     <span className="flex items-center gap-1">
                       <CalendarDays size={12} aria-hidden="true" />
-                      {date.toLocaleDateString('nl-NL', { day: 'numeric', month: 'short' })}
+                      {date.toLocaleDateString(locale, { day: 'numeric', month: 'short' })}
                     </span>
                     <span className="flex items-center gap-1">
                       <Clock3 size={12} aria-hidden="true" />
@@ -321,7 +323,7 @@ export default function ActivitiesPage() {
               type="button"
               aria-pressed={view === item}
               onClick={() => setView(item)}
-              className={`min-h-10 rounded-full border px-4 text-xs font-bold transition ${
+              className={`dashboard-filter-button min-h-10 rounded-full border px-4 text-xs font-bold transition ${
                 view === item
                   ? 'border-habico-navy-dark bg-habico-navy-dark text-habico-white'
                   : 'border-habico-grey/80 bg-habico-white text-habico-blue/70 hover:border-tangy-blue hover:text-tangy-blue'
@@ -343,7 +345,7 @@ export default function ActivitiesPage() {
             type="button"
             aria-pressed={filter === item}
             onClick={() => setFilter(item)}
-            className={`inline-flex min-h-9 shrink-0 items-center gap-2 rounded-full border px-3 text-xs font-bold transition ${
+            className={`dashboard-filter-button inline-flex min-h-9 shrink-0 items-center gap-2 rounded-full border px-3 text-xs font-bold transition ${
               filter === item
                 ? 'border-tangy-blue bg-habico-soft-blue text-tangy-blue'
                 : 'border-habico-grey/80 bg-habico-white text-habico-blue/60 hover:border-tangy-blue'
@@ -365,7 +367,7 @@ export default function ActivitiesPage() {
               <ChevronRight size={18} aria-hidden="true" />
             </button>
           </div>
-          <h2 className="text-habico-navy-dark text-sm font-extrabold capitalize sm:text-lg">{weekTitle(week)}</h2>
+          <h2 className="text-habico-navy-dark text-sm font-extrabold capitalize sm:text-lg">{weekTitle(week, locale)}</h2>
           <button type="button" onClick={() => setWeekOffset(0)} className="min-h-9 rounded-lg border border-habico-grey/80 px-3 text-xs font-bold text-habico-navy hover:border-tangy-blue">
             Vandaag
           </button>
@@ -384,7 +386,7 @@ export default function ActivitiesPage() {
                 <section key={key} className={`min-h-[430px] border-r border-habico-grey/60 last:border-r-0 ${isToday ? 'bg-tangy-blue/[0.035]' : ''}`}>
                   <header className="flex h-[82px] flex-col items-center justify-center border-b border-habico-grey/70 bg-habico-landing/35">
                     <span className="text-[10px] font-extrabold uppercase text-habico-blue/55">
-                      {day.toLocaleDateString('nl-NL', { weekday: 'short' }).replace('.', '')}
+                      {day.toLocaleDateString(locale, { weekday: 'short' }).replace('.', '')}
                     </span>
                     <span className={`mt-1 grid size-9 place-items-center rounded-full text-base font-extrabold ${isToday ? 'bg-tangy-blue text-habico-white' : 'text-habico-navy-dark'}`}>
                       {day.getDate()}
@@ -505,7 +507,7 @@ export default function ActivitiesPage() {
             </div>
             <p className="mt-4 text-xs leading-5 text-habico-blue/65">{selected.description}</p>
             <div className="mt-5 space-y-3 text-xs text-habico-blue/70">
-              <p className="flex items-center gap-2"><CalendarDays size={16} /> {atNoon(selected.date).toLocaleDateString('nl-NL', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
+              <p className="flex items-center gap-2"><CalendarDays size={16} /> {atNoon(selected.date).toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' })}</p>
               <p className="flex items-center gap-2"><Clock3 size={16} /> {activityTime(selected)}</p>
               <p className="flex items-center gap-2"><MapPin size={16} /> {selected.location}</p>
               <p className="flex items-center gap-2"><Users size={16} /> {selected.attendees} deelnemers · Georganiseerd door {selected.organizer}</p>

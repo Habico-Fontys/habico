@@ -98,6 +98,43 @@
   background-color: rgb(24 35 52 / 80%);
 }
 
+[data-dashboard-theme="dark"] .sidebar-active {
+  color: var(--color-habico-white);
+}
+
+[data-dashboard-theme="dark"] .instellingen-opslaan {
+  background-color: #91a8ff;
+  color: #101827;
+}
+
+[data-dashboard-theme="dark"] .instellingen-opslaan:disabled {
+  background-color: #303e59;
+  color: #e6edf6;
+  opacity: 1;
+}
+
+[data-dashboard-theme="dark"] .instellingen-opslaan:not(:disabled):hover {
+  background-color: #a9b9ff;
+  opacity: 1;
+}
+
+[data-dashboard-theme="dark"] .dashboard-filter-button[aria-pressed="true"] {
+  border-color: #91a8ff;
+  background-color: #91a8ff;
+  color: #101827;
+}
+
+[data-dashboard-theme="dark"] .dashboard-filter-button[aria-pressed="false"] {
+  border-color: #526176;
+  background-color: #202c3e;
+  color: #e6edf6;
+}
+
+[data-dashboard-theme="dark"] .dashboard-filter-button[aria-pressed="false"]:hover {
+  border-color: #91a8ff;
+  color: #ffffff;
+}
+
 [data-dashboard-theme="dark"] [class~="bg-white"][class~="text-tangy-blue"],
 [data-dashboard-theme="dark"] [class~="bg-white"][class~="text-[#1D38FF]"] {
   background-color: #fff;
@@ -224,6 +261,11 @@
 [data-dashboard-theme="dark"] [class~="border-orange-200"],
 [data-dashboard-theme="dark"] [class~="border-emerald-200"] {
   border-color: var(--color-dashboard-border);
+}
+
+[data-dashboard-theme="dark"] .minuten-kaart {
+  outline: 1px solid rgb(230 237 246 / 10%);
+  outline-offset: -1px;
 }
 
 * {

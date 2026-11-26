@@ -1,8 +1,11 @@
+"use client";
+
 import { ArrowUpRight, CalendarDays, ChevronRight } from "lucide-react";
 import { DashboardKaart } from "../DashboardKaart";
 import { Pijl } from "../Pijl";
 import type { AgendaActiviteit } from "../../activiteiten/data";
 import { HUISNAAM } from "../../huisgenoten/data";
+import { useLocalization } from "@/components/LocalizationProvider";
 
 export type AgendaKaartProps = {
   href: string;
@@ -10,6 +13,7 @@ export type AgendaKaartProps = {
 };
 
 export function AgendaKaart({ href, agendaItems }: AgendaKaartProps) {
+  const { locale } = useLocalization();
   // Hoge witte agendakaart: gestapelde kaarten als in de referentie.
   return (
     <DashboardKaart
@@ -58,7 +62,7 @@ export function AgendaKaart({ href, agendaItems }: AgendaKaartProps) {
               <span className="flex size-10 shrink-0 flex-col items-center justify-center rounded-xl bg-white text-sm font-bold">
                 {datum.getDate()}
                 <span className="text-[8px] font-medium uppercase text-dashboard-muted">
-                  {datum.toLocaleDateString("nl-NL", { month: "short" })}
+                  {datum.toLocaleDateString(locale, { month: "short" })}
                 </span>
               </span>
               <div className="min-w-0">

@@ -1,8 +1,11 @@
+"use client";
+
 import { ArrowUpRight, ShoppingBasket } from "lucide-react";
 import { DashboardKaart } from "../DashboardKaart";
 import { Pijl } from "../Pijl";
 import { euro } from "../../_lib/euro";
 import type { Product } from "../../boodschappenlijst/data";
+import { useLocalization } from "@/components/LocalizationProvider";
 
 export type BoodschappenKaartProps = {
   href: string;
@@ -13,6 +16,7 @@ export function BoodschappenKaart({
   href,
   productenNodig,
 }: BoodschappenKaartProps) {
+  const { locale } = useLocalization();
   // Korte lijst: één klik brengt je naar de volledige boodschappenpagina.
   return (
     <DashboardKaart
@@ -41,7 +45,7 @@ export function BoodschappenKaart({
                 </p>
               </div>
               <span className="ml-auto whitespace-nowrap text-xs font-semibold">
-                {euro(product.prijs)}
+                {euro(product.prijs, locale)}
               </span>
             </div>
           ))

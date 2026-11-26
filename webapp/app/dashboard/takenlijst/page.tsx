@@ -22,6 +22,7 @@ import {
   type Categorie,
   type Taak,
 } from "./data";
+import { useLocalization } from "@/components/LocalizationProvider";
 
 // Plaats deze code in app/dashboard/takenlijst/page.tsx (of src/app/...).
 // Vereist: Tailwind CSS en lucide-react, net als je boodschappenpagina.
@@ -78,8 +79,8 @@ function maandag(datum: string) {
   return plusDagen(datum, -((d.getDay() + 6) % 7));
 }
 // Maak een korte datum voor de agenda, bijvoorbeeld 9 nov.
-function kortDatum(datum: string) {
-  return new Date(`${datum}T12:00:00`).toLocaleDateString("nl-NL", {
+function kortDatum(datum: string, locale: string) {
+  return new Date(`${datum}T12:00:00`).toLocaleDateString(locale, {
     day: "numeric",
     month: "short",
   });
@@ -147,6 +148,7 @@ function AnimatedNumber({ value }: { value: number }) {
 
 // ---------- 5. De pagina en haar instellingen ----------
 export default function TakenlijstPage() {
+  const { locale } = useLocalization();
   // De geselecteerde week, categorie en filter.
   const [vandaag, setVandaag] = useState("");
   const [week, setWeek] = useState("");
@@ -499,7 +501,7 @@ export default function TakenlijstPage() {
               </button>
               <span className="min-w-0 flex-1 text-center text-xs font-semibold sm:min-w-40 sm:text-sm">
                 {week
-                  ? `${kortDatum(week)} – ${kortDatum(plusDagen(week, 6))} ${new Date(`${plusDagen(week, 6)}T12:00:00`).getFullYear()}`
+                  ? `${kortDatum(week, locale)} – ${kortDatum(plusDagen(week, 6), locale)} ${new Date(`${plusDagen(week, 6)}T12:00:00`).getFullYear()}`
                   : 'Laden…'}
               </span>
               <button
@@ -617,7 +619,7 @@ export default function TakenlijstPage() {
                     ))}
                   <button
                     disabled={dag > vandaag}
-                    aria-label={`Minuten registreren op ${kortDatum(dag)}`}
+                    aria-label={`Minuten registreren op ${kortDatum(dag, locale)}`}
                     onClick={() => openen(dag)}
                     className="mt-auto flex min-h-9 items-center justify-center rounded-lg text-[#6687b0] transition hover:bg-[#e9eaff] hover:text-[#1D38FF] disabled:cursor-not-allowed disabled:opacity-20"
                   >
@@ -885,7 +887,7 @@ export default function TakenlijstPage() {
             <p className="mt-3 text-sm leading-7 text-[#6687b0]">
               {detail.bewoner} · {detail.minuten} minuten
               <br />
-              {kortDatum(detail.datum)} {detail.datum.slice(0, 4)}
+              {kortDatum(detail.datum, locale)} {detail.datum.slice(0, 4)}
             </p>
             <button
               className={`${knop} mt-6 w-full border border-[#FD7702]/25 text-[#bc5500] hover:bg-[#fff0df]`}
