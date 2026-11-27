@@ -1,0 +1,38 @@
+# KiCad backups and autosaves
+*-backups/
+*.bak
+*.bck
+*-bak
+*.kicad_pcb-bak
+*.kicad_sch-bak
+_autosave-*
+\#auto_saved_files#
+~*.lck
+*.lck
+
+# Caches
+fp-info-cache
+*.cache
+
+# Per-user local settings (open sheets, layer visibility, zoom)
+*.kicad_prl
+
+# Generated output (regenerate from the PCB when needed)
+gerbers/
+fabrication/
+production/
+*.zip
+*.gbr
+*.drl
+*.pos
+*.csv
+*.xml
+*.net
+*.erc
+*.rpt
+*.dsn
+*.ses
+
+# OS / editor junk
+.DS_Store
+*~
