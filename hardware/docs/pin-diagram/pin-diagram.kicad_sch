@@ -1101,7 +1101,8 @@
 	)
 	(symbol
 		(lib_id "habico:Pololu_3418_VL53L7CX")
-		(at 184.15 116.84 0)
+		(at 86.36 91.44 0)
+		(mirror y)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -1109,21 +1110,20 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(fields_autoplaced yes)
+		(fields_autoplaced no)
 		(uuid "2aaae27d-1f39-497f-8469-f57b22f28363")
 		(property "Reference" "A1"
-			(at 195.58 116.8399 0)
+			(at 86.36 105.41 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(justify left)
 			)
 		)
 		(property "Value" ""
-			(at 184.15 130.81 0)
+			(at 86.36 91.44 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1133,7 +1133,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 184.15 116.84 0)
+			(at 86.36 91.44 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1144,7 +1144,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 182.372 102.616 0)
+			(at 86.36 91.44 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1155,7 +1155,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 180.594 99.314 0)
+			(at 86.36 91.44 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1364,7 +1364,8 @@
 	)
 	(symbol
 		(lib_id "habico:HX711_module")
-		(at 83.82 115.57 0)
+		(at 177.8 104.14 0)
+		(mirror y)
 		(unit 1)
 		(body_style 1)
 		(exclude_from_sim no)
@@ -1372,10 +1373,10 @@
 		(on_board yes)
 		(in_pos_files yes)
 		(dnp no)
-		(fields_autoplaced yes)
+		(fields_autoplaced no)
 		(uuid "b35dda51-f443-4e9f-b34b-f2a9ce55b8d0")
 		(property "Reference" "A3"
-			(at 83.82 104.14 0)
+			(at 177.8 92.71 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -1385,7 +1386,7 @@
 			)
 		)
 		(property "Value" ""
-			(at 83.82 127 0)
+			(at 177.8 104.14 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1396,7 +1397,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 83.82 115.57 0)
+			(at 177.8 104.14 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1407,7 +1408,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 83.82 115.57 0)
+			(at 177.8 104.14 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1418,7 +1419,7 @@
 			)
 		)
 		(property "Description" ""
-			(at 84.074 100.838 0)
+			(at 177.8 104.14 0)
 			(hide yes)
 			(show_name no)
 			(do_not_autoplace no)
@@ -1466,6 +1467,328 @@
 				)
 			)
 		)
+	)
+	(wire
+		(pts
+			(xy 119.38 90.17) (xy 99.06 90.17)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "94f040f8-30bd-4104-9b69-1baf1763e044")
+	)
+	(wire
+		(pts
+			(xy 119.38 92.71) (xy 99.06 92.71)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e7b8997d-e2a2-4fb6-9caf-95c4d59b8bc9")
+	)
+	(wire
+		(pts
+			(xy 147.32 102.87) (xy 165.1 102.87)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5b8d85ca-b40f-450d-9527-0368b27ad7be")
+	)
+	(wire
+		(pts
+			(xy 147.32 105.41) (xy 165.1 105.41)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d7176856-84a1-4c60-b7c8-1eede95ccdff")
+	)
+	(wire
+		(pts
+			(xy 119.38 80.01) (xy 109.22 80.01)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6e5a659c-58f5-4495-bb2e-bd061e10fd10")
+	)
+	(wire
+		(pts
+			(xy 109.22 80.01) (xy 109.22 85.09)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "df731434-8f88-4e0d-b579-00ee7e48d198")
+	)
+	(wire
+		(pts
+			(xy 109.22 85.09) (xy 101.6 85.09)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "dfe74478-23d0-4515-8b79-584243a0206f")
+	)
+	(wire
+		(pts
+			(xy 101.6 85.09) (xy 99.06 85.09)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "21ccbbbb-8762-4b69-b7ca-43cbc408ae62")
+	)
+	(wire
+		(pts
+			(xy 119.38 77.47) (xy 104.14 77.47)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "04d8fb20-6b7a-4120-b998-b7de27b5b024")
+	)
+	(wire
+		(pts
+			(xy 104.14 77.47) (xy 104.14 87.63)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "bc559ebc-9827-4932-af2d-bcdbc0b69764")
+	)
+	(wire
+		(pts
+			(xy 104.14 87.63) (xy 99.06 87.63)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ea47e65b-76ca-4391-b8bb-345b95be2c02")
+	)
+	(wire
+		(pts
+			(xy 165.1 100.33) (xy 157.48 100.33)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "df60b0f1-4f35-4e98-87e6-5a1ccc838ea7")
+	)
+	(wire
+		(pts
+			(xy 157.48 100.33) (xy 157.48 77.47)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e19ad65e-9971-492f-a506-0df068623ee6")
+	)
+	(wire
+		(pts
+			(xy 157.48 77.47) (xy 147.32 77.47)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e970ad9b-d6f7-4517-8a7d-757c549b17e0")
+	)
+	(wire
+		(pts
+			(xy 165.1 107.95) (xy 160.02 107.95)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5a839713-6d69-4a9b-9fda-800fa1ff0c08")
+	)
+	(wire
+		(pts
+			(xy 160.02 107.95) (xy 160.02 124.46)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "47f7b01e-d511-4739-89f3-fab72e231b65")
+	)
+	(wire
+		(pts
+			(xy 160.02 124.46) (xy 73.66 124.46)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "db94762c-3696-4999-9486-19f9fbe1ec5f")
+	)
+	(wire
+		(pts
+			(xy 73.66 124.46) (xy 73.66 74.93)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d60ff57c-58cd-4804-baec-285c8aa72d3e")
+	)
+	(wire
+		(pts
+			(xy 73.66 74.93) (xy 101.6 74.93)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ee5e5beb-e8e0-4884-8bd7-4bc27817f44e")
+	)
+	(wire
+		(pts
+			(xy 101.6 74.93) (xy 101.6 85.09)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2bed7a7d-5c11-41f8-8296-c670f28d4fbb")
+	)
+	(junction
+		(at 101.6 85.09)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "a5c70c18-3096-4f27-bd99-1e6dae5b7ead")
+	)
+	(no_connect
+		(at 190.5 107.95)
+		(uuid "f9fda247-f9cc-4bb4-9d72-719f5be30919")
+	)
+	(no_connect
+		(at 190.5 110.49)
+		(uuid "9a2b56b0-1c01-44bf-8999-9a9e0ae8ad35")
+	)
+	(no_connect
+		(at 99.06 82.55)
+		(uuid "a690d646-52bb-43fe-a075-7f8916673257")
+	)
+	(no_connect
+		(at 99.06 95.25)
+		(uuid "1b36bc56-5df8-4790-be17-bfbd24b415de")
+	)
+	(no_connect
+		(at 99.06 97.79)
+		(uuid "0782b375-3540-4ac5-8cc2-71a8b24e4cce")
+	)
+	(no_connect
+		(at 99.06 100.33)
+		(uuid "0b12fd2f-b4eb-4140-bb00-31e5b7930d1c")
+	)
+	(no_connect
+		(at 119.38 82.55)
+		(uuid "c83e7b01-f8d9-4285-ac46-1e3fb2fadead")
+	)
+	(no_connect
+		(at 119.38 85.09)
+		(uuid "b1db0bdb-6c5e-4fa9-9bca-38e728d65301")
+	)
+	(no_connect
+		(at 119.38 87.63)
+		(uuid "d68ca128-c149-49f2-9cac-73d927ed0730")
+	)
+	(no_connect
+		(at 119.38 95.25)
+		(uuid "8e9520b1-fc00-406b-9186-6fd317e57856")
+	)
+	(no_connect
+		(at 119.38 97.79)
+		(uuid "be248eb3-c58b-44a7-a490-9e61b7645d0c")
+	)
+	(no_connect
+		(at 119.38 100.33)
+		(uuid "00b77586-5eb3-4c3d-882f-1d3475cc7b7f")
+	)
+	(no_connect
+		(at 119.38 102.87)
+		(uuid "f52a2e74-38be-4561-a30f-def2a42b8b6f")
+	)
+	(no_connect
+		(at 119.38 105.41)
+		(uuid "c5c4e7a1-95c3-4497-89a5-6d22da983977")
+	)
+	(no_connect
+		(at 119.38 107.95)
+		(uuid "b43e4e5b-edd9-4e94-a065-141600c523b4")
+	)
+	(no_connect
+		(at 119.38 110.49)
+		(uuid "9a12313f-937f-46da-b585-50836320a0f8")
+	)
+	(no_connect
+		(at 119.38 113.03)
+		(uuid "7cebfdc7-aae5-46be-96f5-14d806c89aa9")
+	)
+	(no_connect
+		(at 147.32 80.01)
+		(uuid "675c55f8-9591-4be4-a62e-cf0391d40f95")
+	)
+	(no_connect
+		(at 147.32 82.55)
+		(uuid "ec432b05-1c98-4f04-b692-0f94893447f0")
+	)
+	(no_connect
+		(at 147.32 85.09)
+		(uuid "ed04255c-14ee-4adb-9d11-da9f5a6af18f")
+	)
+	(no_connect
+		(at 147.32 87.63)
+		(uuid "b136adef-c5e5-4a6a-8cf8-270fb9a735aa")
+	)
+	(no_connect
+		(at 147.32 90.17)
+		(uuid "234d1ed7-704b-4be6-90f2-2f4ed6aed9f3")
+	)
+	(no_connect
+		(at 147.32 92.71)
+		(uuid "cde73d59-c896-450d-aaba-51c0c01cce6b")
+	)
+	(no_connect
+		(at 147.32 95.25)
+		(uuid "2071a0a3-6a73-425c-a0c9-45655d303488")
+	)
+	(no_connect
+		(at 147.32 97.79)
+		(uuid "a1672511-0569-4e6a-95f6-efe79cee2fa8")
+	)
+	(no_connect
+		(at 147.32 100.33)
+		(uuid "d99f6626-851e-4651-8ec6-042ff5d67be8")
+	)
+	(no_connect
+		(at 147.32 107.95)
+		(uuid "7fc3428f-e21f-4ef3-9ead-9ccc0b2c0189")
+	)
+	(no_connect
+		(at 147.32 110.49)
+		(uuid "b34f3002-2391-49c7-8ee2-d3ffc7a1594a")
+	)
+	(no_connect
+		(at 147.32 113.03)
+		(uuid "8317aff2-18f7-4110-b9bb-566c561be997")
 	)
 	(sheet_instances
 		(path "/"
