@@ -114,8 +114,8 @@ function Card({ children, className = "" }: { children: ReactNode; className?: s
 }
 
 function AnimatedNumber({ value }: { value: number }) {
-  const [displayValue, setDisplayValue] = useState(0);
-  const currentValue = useRef(0);
+  const [displayValue, setDisplayValue] = useState(value);
+  const currentValue = useRef(value);
 
   useEffect(() => {
     const from = currentValue.current;
