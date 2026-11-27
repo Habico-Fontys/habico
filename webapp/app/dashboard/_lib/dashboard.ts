@@ -1,20 +1,11 @@
 import type { AgendaActiviteit } from "../activiteiten/data";
 import type { BoodschappenData, Product } from "../boodschappenlijst/data";
+import { translateText, type Locale } from "../../../lib/localization";
 import { datumSleutel, startVanWeek } from "./datum";
 
 export type Bijdrage = { bewoner: string; minuten: number; datum: string };
 export type Dag = { naam: string; minuten: number };
 export type GrafiekDag = Dag & { hoogte: number; titel: string };
-
-const DAGEN_NAMEN = [
-  "Maandag",
-  "Dinsdag",
-  "Woensdag",
-  "Donderdag",
-  "Vrijdag",
-  "Zaterdag",
-  "Zondag",
-];
 
 export function berekenWeekTotalen(bijdragen: Bijdrage[], weekdoel: number) {
   const minuten = bijdragen.reduce((som, item) => som + item.minuten, 0);
@@ -60,12 +51,14 @@ export function bepaalBegroeting(vandaag: Date | null) {
 export function berekenDagen(
   vandaag: Date | null,
   bijdragen: Bijdrage[],
+  locale: Locale = "nl",
 ): Dag[] {
   return Array.from({ length: 7 }, (_, index) => {
     const datum = vandaag ? startVanWeek(vandaag) : null;
     if (datum) datum.setDate(datum.getDate() + index);
+    const dagLabelDatum = new Date(2026, 0, 5 + index, 12);
     return {
-      naam: ["M", "D", "W", "D", "V", "Z", "Z"][index],
+      naam: dagLabelDatum.toLocaleDateString(locale, { weekday: "narrow" }),
       minuten: datum
         ? bijdragen
             .filter((item) => item.datum === datumSleutel(datum))
@@ -82,12 +75,21 @@ export function bepaalHoogsteDag(dagen: Dag[]) {
 export function berekenGrafiekDagen(
   dagen: Dag[],
   hoogsteDag: number,
+  locale: Locale = "nl",
 ): GrafiekDag[] {
-  return dagen.map((dag, index) => ({
-    ...dag,
-    hoogte: Math.max(5, (dag.minuten / hoogsteDag) * 100),
-    titel: `${DAGEN_NAMEN[index]}: ${dag.minuten} min`,
-  }));
+  return dagen.map((dag, index) => {
+    const weekday = new Date(2026, 0, 5 + index, 12).toLocaleDateString(
+      locale,
+      { weekday: "long" },
+    );
+    const title = `${weekday.charAt(0).toLocaleUpperCase(locale)}${weekday.slice(1)}`;
+
+    return {
+      ...dag,
+      hoogte: Math.max(5, (dag.minuten / hoogsteDag) * 100),
+      titel: `${title}: ${dag.minuten} ${translateText("min", locale)}`,
+    };
+  });
 }
 
 export function filterBijdragen(

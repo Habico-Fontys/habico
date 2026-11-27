@@ -14,6 +14,7 @@ import {
   X,
 } from "lucide-react";
 import { useLocalStorageValue } from "@/hooks/useLocalStorageValue";
+import { useLocalization } from "@/components/LocalizationProvider";
 import { BEGIN_SENSOR, isSensorData, SENSOR_OPSLAG } from "./sensor";
 
 // ---------- 1. Installatie ----------
@@ -54,8 +55,8 @@ function plusDagen(datum: string, aantal: number) {
   dag.setDate(dag.getDate() + aantal);
   return datumSleutel(dag);
 }
-function langeDatum(datum: string) {
-  return new Date(`${datum}T12:00:00`).toLocaleDateString("nl-NL", {
+function langeDatum(datum: string, locale: string) {
+  return new Date(`${datum}T12:00:00`).toLocaleDateString(locale, {
     weekday: "long",
     day: "numeric",
     month: "long",
@@ -117,14 +118,14 @@ function Card({ children, className = "" }: { children: ReactNode; className?: s
 }
 
 // Eén rij voor zowel de korte als de volledige ophaalkalender.
-function KalenderRij({ moment }: { moment: Moment }) {
+function KalenderRij({ moment, locale }: { moment: Moment; locale: string }) {
   const datum = new Date(`${moment.datum}T12:00:00`);
   return (
     <div className="flex items-center gap-3 rounded-2xl bg-[#f0f1f6] p-3 sm:p-4">
       <span className="flex size-12 shrink-0 flex-col items-center justify-center rounded-xl bg-white">
         <strong className="text-lg">{datum.getDate()}</strong>
         <span className="text-[9px] font-semibold uppercase text-[#6687b0]">
-          {datum.toLocaleDateString("nl-NL", { month: "short" })}
+          {datum.toLocaleDateString(locale, { month: "short" })}
         </span>
       </span>
       <div className="min-w-0 flex-1">
@@ -150,6 +151,7 @@ function KalenderRij({ moment }: { moment: Moment }) {
 
 // ---------- 5. Pagina, opslag en vensters ----------
 export default function AfvalPage() {
+  const { locale } = useLocalization();
   const [sensor] = useLocalStorageValue(
     SENSOR_OPSLAG,
     BEGIN_SENSOR,
@@ -283,7 +285,7 @@ export default function AfvalPage() {
       ],
     }));
     setMelding(
-      `${soort} toegevoegd voor ${langeDatum(datum)}. ${bewoner} zet de bak buiten.`,
+      `${soort} toegevoegd voor ${langeDatum(datum, locale)}. ${bewoner} zet de bak buiten.`,
     );
   }
 
@@ -375,7 +377,7 @@ export default function AfvalPage() {
                 {volgende.soort}
               </h2>
               <p className="relative mt-3 text-lg font-medium text-white">
-                {langeDatum(volgende.datum)}
+                {langeDatum(volgende.datum, locale)}
               </p>
               <div className="relative mt-5 flex flex-wrap gap-x-5 gap-y-3 text-sm text-white/85">
                 <span className="flex items-center gap-2">
@@ -579,7 +581,7 @@ export default function AfvalPage() {
           </div>
           <div className="space-y-2">
             {komende.slice(0, 4).map((moment) => (
-              <KalenderRij key={moment.id} moment={moment} />
+              <KalenderRij key={moment.id} moment={moment} locale={locale} />
             ))}
           </div>
           {geladen && komende.length === 0 && (
@@ -634,10 +636,10 @@ export default function AfvalPage() {
               {gesorteerd.map((moment) => (
                 <div key={moment.id}>
                   <p className="mb-2 text-xs text-[#6687b0]">
-                    {langeDatum(moment.datum)} {moment.datum.slice(0, 4)}
+                    {langeDatum(moment.datum, locale)} {moment.datum.slice(0, 4)}
                     {moment.datum < vandaag && " · Afgelopen"}
                   </p>
-                  <KalenderRij moment={moment} />
+                  <KalenderRij moment={moment} locale={locale} />
                 </div>
               ))}
             </div>

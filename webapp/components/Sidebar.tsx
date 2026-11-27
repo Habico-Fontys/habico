@@ -66,7 +66,7 @@ export function Sidebar() {
               </span>
               <Image
                 src="/brand/Habico_Logo_Icon.svg"
-                alt=""
+                alt="Habico"
                 width={48}
                 height={51}
                 className="hidden h-12 w-auto object-contain md:block"
@@ -237,24 +237,24 @@ export function Sidebar() {
               title={item.label}
               className={`relative z-10 flex min-h-11 shrink-0 items-center gap-3 rounded-xl px-3 text-xs font-semibold transition-colors md:min-h-12 md:text-sm ${
                 collapsed ? 'md:justify-center md:gap-0 md:px-0' : ''
-              } ${active ? 'text-tangy-blue' : 'text-habico-white/65 hover:bg-habico-white/[0.07] hover:text-habico-white'}`}
+              } ${active ? 'sidebar-active text-tangy-blue' : 'text-habico-white/65 hover:bg-habico-white/[0.07] hover:text-habico-white'}`}
             >
               {item.icon === 'trash' ? (
                 <Trash2
                   aria-hidden="true"
-                  className={`size-4 shrink-0 ${active ? 'text-tangy-blue' : undefined}`}
+                  className="size-4 shrink-0"
                   strokeWidth={1.8}
                 />
               ) : item.icon === 'party-popper' ? (
                 <PartyPopper
                   aria-hidden="true"
-                  className={`size-4 shrink-0 ${active ? 'text-tangy-blue' : undefined}`}
+                  className="size-4 shrink-0"
                   strokeWidth={1.8}
                 />
               ) : (
                 <svg
                   aria-hidden="true"
-                  className={`size-4 shrink-0 ${active ? 'text-tangy-blue' : undefined}`}
+                  className="size-4 shrink-0"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -268,7 +268,7 @@ export function Sidebar() {
               <span
                 className={`max-w-[160px] overflow-hidden whitespace-nowrap opacity-100 transition-[max-width,opacity] duration-300 motion-reduce:transition-none ${
                   collapsed ? 'md:max-w-0 md:opacity-0' : ''
-                } ${active ? 'text-tangy-blue' : 'text-habico-blue/70'}`}
+                } ${active ? 'text-inherit' : 'text-habico-blue/70'}`}
               >
                 {item.label}
               </span>
@@ -299,7 +299,7 @@ export function Sidebar() {
           <p className="text-habico-white/70 mt-1 text-[11px] leading-relaxed">
             Een fijn huis begint met kleine dingen samen doen.
           </p>
-        </div>
+        </div> 
       </div>
 
       {/* NIEUW: het oude blok met "AD" en "Marvin Verspeek" is vervangen door een

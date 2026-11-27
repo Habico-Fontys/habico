@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import AanbiedingenBanner from "../../../components/AanbiedingenBanner";
 import { useLocalStorageValue } from "@/hooks/useLocalStorageValue";
+import { useLocalization } from "@/components/LocalizationProvider";
+import { euro } from "../_lib/euro";
 import {
   BEGIN_BOODSCHAPPEN_DATA,
   BOODSCHAPPEN_OPSLAG,
@@ -22,11 +24,6 @@ import { HUISNAAM } from "../huisgenoten/data";
 type Sectie = "lijst" | "budget" | "inleg" | "aanbiedingen";
 
 // ---------- Hulpfuncties (buiten de component) ----------
-const euro = (bedrag: number) =>
-  new Intl.NumberFormat("nl-NL", { style: "currency", currency: "EUR" }).format(
-    bedrag
-  );
-
 const initialen = (naam: string) => naam.slice(0, 2).toUpperCase();
 
 // ---------- Herbruikbare onderdelen ----------
@@ -59,6 +56,7 @@ function Avatar({ naam }: { naam: string }) {
 
 // ---------- De pagina ----------
 export default function BoodschappenlijstPage() {
+  const { locale } = useLocalization();
   const [boodschappen, setBoodschappen] = useLocalStorageValue(
     BOODSCHAPPEN_OPSLAG,
     BEGIN_BOODSCHAPPEN_DATA,
@@ -233,15 +231,15 @@ export default function BoodschappenlijstPage() {
           {
             id: "budget" as const,
             label: "Beschikbaar",
-            value: euro(over),
-            detail: `${euro(uitgegeven)} uitgegeven`,
+            value: euro(over, locale),
+            detail: `${euro(uitgegeven, locale)} uitgegeven`,
             accent: "bg-tangy-blue text-white",
             icon: <WalletCards size={24} strokeWidth={2} />,
           },
           {
             id: "inleg" as const,
             label: "Maandelijkse inleg",
-            value: euro(inleg),
+            value: euro(inleg, locale),
             detail: `${aantalBetaald} van ${bewoners.length} betaald`,
             accent: "bg-habico-landing text-habico-navy",
             icon: <UsersRound size={24} strokeWidth={2} />,
@@ -416,7 +414,7 @@ export default function BoodschappenlijstPage() {
                       p.gekocht ? "text-[var(--muted)] line-through" : ""
                     }`}
                   >
-                    {euro(p.prijs)}
+                    {euro(p.prijs, locale)}
                   </p>
 
                   <button
@@ -433,7 +431,7 @@ export default function BoodschappenlijstPage() {
 
           <div className="mt-2 flex items-center justify-between rounded-2xl bg-habico-landing p-4">
             <span className="text-habico-blue/70">Nog op de lijst</span>
-            <span className="text-lg font-bold">{euro(nogOpDeLijst)}</span>
+            <span className="text-lg font-bold">{euro(nogOpDeLijst, locale)}</span>
           </div>
         </Card>
 
@@ -458,7 +456,7 @@ export default function BoodschappenlijstPage() {
                 over < 0 ? "text-habico-orange" : ""
               }`}
             >
-              {euro(over)}
+              {euro(over, locale)}
             </p>
 
             <div className="mt-5 h-2 overflow-hidden rounded-full bg-white/25">
@@ -469,8 +467,8 @@ export default function BoodschappenlijstPage() {
             </div>
 
             <div className="mt-3 flex flex-wrap justify-between gap-x-4 gap-y-1 text-sm">
-              <span>Uitgegeven {euro(uitgegeven)}</span>
-              <span>Ingelegd {euro(ingelegd)}</span>
+              <span>Uitgegeven {euro(uitgegeven, locale)}</span>
+              <span>Ingelegd {euro(ingelegd, locale)}</span>
             </div>
           </section>
 
@@ -485,7 +483,7 @@ export default function BoodschappenlijstPage() {
                 Maandelijkse inleg
               </h2>
               <span className="rounded-full bg-habico-grey/50 px-3 py-1 text-xs font-semibold text-habico-navy">
-                {euro(inleg)} p.p.
+                {euro(inleg, locale)} p.p.
               </span>
             </div>
             <p className="mt-1 text-sm text-[var(--muted)]">
@@ -573,8 +571,8 @@ export default function BoodschappenlijstPage() {
               ) : (
                 <div className="space-y-3 rounded-2xl bg-habico-soft-blue p-4">
                   <p className="text-sm text-habico-navy">
-                    Van <strong>{euro(inleg)}</strong> naar{" "}
-                    <strong>{euro(voorstel.nieuwBedrag)}</strong>
+                    Van <strong>{euro(inleg, locale)}</strong> naar{" "}
+                    <strong>{euro(voorstel.nieuwBedrag, locale)}</strong>
                   </p>
                   <ul className="flex flex-wrap gap-2">
                     {bewoners.map((b) => {

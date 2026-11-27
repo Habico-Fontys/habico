@@ -1,8 +1,11 @@
+"use client";
+
 import { Wallet } from "lucide-react";
 import { DashboardKaart } from "../DashboardKaart";
 import { OplopendGetal } from "../OplopendGetal";
 import { Pijl } from "../Pijl";
 import { euro } from "../../_lib/euro";
+import { useLocalization } from "@/components/LocalizationProvider";
 
 export type BudgetKaartProps = {
   href: string;
@@ -15,6 +18,7 @@ export function BudgetKaart({
   beschikbaar,
   uitgegeven,
 }: BudgetKaartProps) {
+  const { locale } = useLocalization();
   // Blauwe hoofdkaart: direct naar de gezamenlijke boodschappen.
   return (
     <DashboardKaart
@@ -42,7 +46,7 @@ export function BudgetKaart({
         <span className="rounded-full bg-white px-4 py-2 text-xs font-semibold text-tangy-blue">
           Bekijk budget
         </span>
-        <span className="text-xs text-white/75">{euro(uitgegeven)} uitgegeven</span>
+        <span className="text-xs text-white/75">{euro(uitgegeven, locale)} uitgegeven</span>
       </div>
     </DashboardKaart>
   );

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Poppins } from 'next/font/google';
 import './globals.css';
 import './theme.css';
+import { LocalizationProvider } from '@/components/LocalizationProvider';
 
 const poppins = Poppins({
   variable: '--font-poppins-custom',
@@ -19,7 +20,9 @@ export const viewport: Viewport = { viewportFit: 'cover' };
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
     <html lang="nl" className={`${poppins.variable} h-full antialiased`}>
-      <body className="font-poppins min-h-full">{children}</body>
+      <body className="font-poppins min-h-full">
+        <LocalizationProvider>{children}</LocalizationProvider>
+      </body>
     </html>
   );
 }
