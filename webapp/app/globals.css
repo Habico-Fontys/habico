@@ -24,6 +24,28 @@
   --color-dashboard-avatar-peach: #ffe3ca;
   --color-dashboard-avatar-brown: #a44700;
   --color-dashboard-avatar-blue: #e0e5ff;
+  --color-auth-ink: #10121d;
+  --color-auth-story: #03051e;
+  --color-auth-story-glow: #4766bd;
+  --color-auth-gradient-amber: #ff941a;
+  --color-auth-gradient-orange: #ed5900;
+  --color-auth-gradient-coral: #e97842;
+  --color-auth-gradient-periwinkle: #777bff;
+  --color-auth-gradient-blue: #003a9b;
+  --color-auth-gradient-peach: #ff996d;
+  --color-auth-gradient-lavender: #b9c9ff;
+  --color-auth-feature-glass: #dce0ee;
+  --color-auth-description: #5c606b;
+  --color-auth-field-outline: #dfe3ed;
+  --color-auth-placeholder: #8c94a2;
+  --color-auth-action-hover: #142bd6;
+  --color-auth-switch-copy: #566477;
+  --color-auth-help: #68758a;
+  --color-auth-error-surface: #fff0e3;
+  --color-auth-error-ink: #873800;
+  --color-auth-success-surface: #e9edff;
+  --color-auth-field-label: #424651;
+  --color-auth-field-border: #e0e1e5;
   --font-poppins: var(--font-poppins-custom), sans-serif;
    --animate-wiggle: wiggle 2.5s ease-in-out infinite;
 
@@ -880,5 +902,599 @@ a:focus-visible {
   *::after {
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+html:has(.habico-login),
+body:has(.habico-login) {
+  margin: 0;
+  height: 100%;
+  overflow: hidden !important;
+  overscroll-behavior: none;
+}
+.habico-login {
+  @apply font-poppins;
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 41.5fr) minmax(0, 58.5fr);
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--color-white);
+  color: var(--color-auth-ink);
+  font-weight: 400;
+}
+.habico-login *,
+.habico-login *::before,
+.habico-login *::after {
+  box-sizing: border-box;
+}
+.habico-verhaal {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  padding: 40px 0 28px;
+  color: var(--color-white);
+  background: var(--color-auth-story);
+}
+.habico-gradient {
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      ellipse at 90% 75%,
+      var(--color-auth-story-glow),
+      transparent 55%
+    ),
+    var(--color-auth-story);
+}
+.habico-mascotte {
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  bottom: -2px;
+  transform: translateX(-50%);
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 64%;
+  object-fit: contain;
+  object-position: center bottom;
+  pointer-events: none;
+  user-select: none;
+}
+.habico-gradient i {
+  position: absolute;
+  display: block;
+  filter: blur(48px);
+  border-radius: 50%;
+  will-change: transform;
+}
+.habico-gradient i:nth-child(1) {
+  width: 110%;
+  height: 90%;
+  left: -62%;
+  top: -35%;
+  background: linear-gradient(
+    140deg,
+    var(--color-auth-gradient-amber) 15%,
+    var(--color-auth-gradient-orange) 46%,
+    var(--color-auth-gradient-coral) 78%
+  );
+  animation: habico-warm 12s ease-in-out infinite alternate;
+}
+.habico-gradient i:nth-child(2) {
+  width: 130%;
+  height: 60%;
+  left: -12%;
+  bottom: -20%;
+  background: linear-gradient(
+    120deg,
+    var(--color-auth-gradient-periwinkle),
+    var(--color-tangy-blue) 55%,
+    var(--color-auth-gradient-blue)
+  );
+  animation: habico-cool 15s ease-in-out infinite alternate;
+}
+.habico-gradient i:nth-child(3) {
+  width: 85%;
+  height: 27%;
+  right: -35%;
+  top: 50%;
+  background: linear-gradient(
+    100deg,
+    var(--color-auth-gradient-peach),
+    var(--color-auth-gradient-lavender)
+  );
+  opacity: 0.85;
+  animation: habico-glow 10s ease-in-out infinite alternate;
+}
+.habico-brand,
+.habico-intro,
+.habico-samen {
+  width: calc(100% - 80px);
+  max-width: 350px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.habico-brand {
+  flex-shrink: 0;
+  height: 38px;
+  display: flex;
+  align-items: center;
+}
+.habico-brand :is(svg, img) {
+  width: auto;
+  max-width: 145px;
+  max-height: 38px;
+  filter: brightness(0) invert(1);
+}
+.habico-intro {
+  margin-top: clamp(60px, 10vh, 110px);
+  margin-bottom: 40px;
+  flex-shrink: 0;
+}
+.habico-intro h2 {
+  font-size: clamp(28px, 2.25vw, 36px);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.055em;
+  margin: 0 0 16px;
+}
+.habico-intro > p {
+  font-size: 15px;
+  line-height: 1.65;
+  color: color-mix(in srgb, var(--color-white) 78.82%, transparent);
+  margin: 0;
+}
+.habico-marquee {
+  width: 100%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.habico-track {
+  display: flex;
+  width: max-content;
+  animation: habico-slide 42s linear infinite;
+  will-change: transform;
+}
+.habico-kaartgroep {
+  display: flex;
+  gap: 16px;
+  padding-right: 16px;
+  flex-shrink: 0;
+}
+.habico-feature {
+  width: 268px;
+  min-height: 268px;
+  padding: 25px 24px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid color-mix(in srgb, var(--color-white) 14.51%, transparent);
+  border-radius: 17px;
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--color-white) 18.82%, transparent),
+    color-mix(in srgb, var(--color-auth-feature-glass) 0.39%, transparent)
+  );
+  backdrop-filter: blur(18px);
+}
+.habico-kaartnummer {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: color-mix(in srgb, var(--color-white) 61.96%, transparent);
+}
+.habico-feature h3 {
+  margin: 20px 0 10px;
+  font-weight: 400;
+  font-size: 19px;
+  line-height: 1.35;
+  letter-spacing: -0.035em;
+}
+.habico-feature > p {
+  margin: 0 0 24px;
+  font-size: 13px;
+  line-height: 1.65;
+  color: color-mix(in srgb, var(--color-white) 87.84%, transparent);
+}
+.habico-kaartvoet {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: auto;
+  font-size: 12px;
+}
+.habico-kaartvoet small {
+  display: block;
+  font-size: 11px;
+  color: color-mix(in srgb, var(--color-white) 56.47%, transparent);
+  margin-top: 4px;
+}
+.habico-feature-icoon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-white) 12.16%, transparent);
+  font-size: 23px;
+}
+.habico-samen {
+  margin-top: 40px;
+  text-align: center;
+  font-size: 12px;
+}
+.habico-samen > span {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.habico-samen > span::before,
+.habico-samen > span::after {
+  content: "";
+  height: 1px;
+  background: color-mix(in srgb, var(--color-white) 18.82%, transparent);
+  flex: 1;
+}
+.habico-samen > div {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 25px;
+  color: color-mix(in srgb, var(--color-white) 65.88%, transparent);
+  font-size: 13px;
+}
+.habico-marquee:hover .habico-track {
+  animation-play-state: paused;
+}
+.habico-formulierpaneel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+  padding: 48px;
+}
+.habico-auth-card {
+  width: 100%;
+  max-width: 415px;
+  flex-shrink: 0;
+  margin-block: auto;
+}
+.habico-formulierkop {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.habico-formulierkop h1 {
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  line-height: 1.25;
+  margin: 0 0 8px;
+}
+.habico-formulierkop p {
+  font-size: 14px;
+  color: var(--color-auth-description);
+  line-height: 1.6;
+  margin: 0;
+}
+.habico-mobile-logo {
+  display: none;
+}
+.habico-login-velden form {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+}
+.habico-login-velden form > * {
+  margin-top: 0;
+  margin-bottom: 0;
+  min-width: 0;
+}
+.habico-login-velden label {
+  display: block;
+  margin: 0 0 5px;
+  color: var(--color-dashboard-ink);
+  font-size: 10px;
+  line-height: 1.5;
+  font-weight: 500;
+}
+.habico-login-velden
+  input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not(
+    [type="submit"]
+  ) {
+  display: block;
+  width: 100%;
+  height: 38px;
+  min-height: 38px;
+  margin: 0;
+  padding: 9px 11px;
+  border: 1px solid var(--color-auth-field-outline);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--color-dashboard-ink);
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: 400;
+  box-shadow: none;
+  outline: none;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+.habico-login-velden input::placeholder {
+  color: var(--color-auth-placeholder);
+  opacity: 1;
+}
+.habico-login-velden input:focus-visible {
+  border-color: var(--color-tangy-blue);
+  box-shadow: 0 0 0 3px
+    color-mix(in srgb, var(--color-tangy-blue) 9.41%, transparent);
+}
+.habico-login-velden :is(button[type="submit"], input[type="submit"]) {
+  display: block;
+  width: 100%;
+  min-height: 36px;
+  padding: 9px 12px;
+  margin: 0;
+  border: 1px solid var(--color-tangy-blue);
+  border-radius: 6px;
+  background: var(--color-tangy-blue);
+  color: var(--color-white);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  cursor: pointer;
+  box-shadow: none;
+  transition: background 160ms ease;
+}
+.habico-login-velden button[type="submit"]:hover:not(:disabled) {
+  background: var(--color-auth-action-hover);
+}
+.habico-login-velden button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.habico-login :is(a, button):focus-visible {
+  outline: 2px solid var(--color-tangy-blue);
+  outline-offset: 3px;
+}
+.habico-login-velden a {
+  color: var(--color-tangy-blue);
+  font-size: 11px;
+  font-weight: 400;
+}
+.habico-login-velden p {
+  font-size: 11px;
+  line-height: 1.5;
+}
+.habico-wisselen {
+  margin: 18px 0 0;
+  text-align: center;
+  color: var(--color-auth-switch-copy);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+.habico-wisselen a,
+.habico-registratie-klaar a {
+  color: var(--color-tangy-blue);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.habico-login-velden .habico-registratie-form label {
+  display: grid;
+  gap: 5px;
+  margin: 0;
+}
+.habico-form-rij {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 10px;
+}
+.habico-wachtwoordveld {
+  position: relative;
+  display: block;
+}
+.habico-login-velden .habico-wachtwoordveld input {
+  padding-right: 64px;
+}
+.habico-toon {
+  position: absolute;
+  top: 1px;
+  bottom: 1px;
+  right: 2px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--color-tangy-blue);
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 400;
+  cursor: pointer;
+}
+.habico-login-velden .habico-form-hulp {
+  margin: -8px 0 0;
+  color: var(--color-auth-help);
+  font-size: 10px;
+}
+.habico-form-fout {
+  padding: 10px;
+  border-radius: 6px;
+  background: var(--color-auth-error-surface);
+  color: var(--color-auth-error-ink);
+}
+.habico-registratie-klaar {
+  padding: 16px;
+  border-radius: 8px;
+  background: var(--color-auth-success-surface);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.habico-login-velden form {
+  gap: 20px;
+}
+.habico-login-velden label {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--color-auth-field-label);
+}
+.habico-login-velden
+  input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not(
+    [type="submit"]
+  ) {
+  height: 42px;
+  min-height: 42px;
+  font-size: 13px;
+  border-color: var(--color-auth-field-border);
+  border-radius: 7px;
+  color: var(--color-auth-ink);
+  background: var(--color-white);
+  box-shadow: 0 1px 2px
+    color-mix(in srgb, var(--color-black) 2.35%, transparent);
+}
+.habico-login-velden input[type="checkbox"] {
+  accent-color: var(--color-tangy-blue);
+  width: 16px;
+  height: 16px;
+}
+.habico-login-velden :is(button[type="submit"], input[type="submit"]) {
+  min-height: 42px;
+  font-size: 14px;
+  border-radius: 7px;
+}
+.habico-login-velden a,
+.habico-login-velden p {
+  font-size: 13px;
+}
+.habico-wisselen {
+  font-size: 13px;
+  margin-top: 28px;
+}
+.habico-wisselen a {
+  text-decoration: none;
+}
+.habico-wisselen a:hover {
+  text-decoration: underline;
+}
+@keyframes habico-slide {
+  from {
+    transform: translateX(-120px);
+  }
+  to {
+    transform: translateX(calc(-50% - 120px));
+  }
+}
+@keyframes habico-warm {
+  0% {
+    transform: translate(-8%, -5%) rotate(-30deg) scale(1);
+  }
+  50% {
+    transform: translate(24%, 12%) rotate(-12deg) scale(1.12);
+  }
+  100% {
+    transform: translate(43%, 38%) rotate(-55deg) scale(1.2);
+  }
+}
+@keyframes habico-cool {
+  0% {
+    transform: translate(-16%, 14%) rotate(4deg) scale(1);
+  }
+  50% {
+    transform: translate(4%, -12%) rotate(-8deg) scale(1.12);
+  }
+  100% {
+    transform: translate(22%, -38%) rotate(-22deg) scale(1.05);
+  }
+}
+@keyframes habico-glow {
+  0% {
+    transform: translate(8%, 12%) rotate(-30deg) scale(1);
+  }
+  50% {
+    transform: translate(-30%, -18%) rotate(0deg) scale(1.18);
+  }
+  100% {
+    transform: translate(-65%, -55%) rotate(26deg) scale(1.08);
+  }
+}
+@media (min-width: 1600px) {
+  .habico-brand,
+  .habico-intro,
+  .habico-samen {
+    max-width: 390px;
+  }
+}
+@media (max-width: 900px) {
+  .habico-login {
+    grid-template-columns: minmax(0, 45fr) minmax(0, 55fr);
+  }
+  .habico-brand,
+  .habico-intro,
+  .habico-samen {
+    width: calc(100% - 48px);
+  }
+  .habico-formulierpaneel {
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+}
+@media (max-width: 700px) {
+  .habico-login {
+    display: block;
+  }
+  .habico-verhaal {
+    display: none;
+  }
+  .habico-formulierpaneel {
+    padding: 90px 24px 32px;
+  }
+  .habico-mobile-logo {
+    display: block;
+    position: absolute;
+    top: 30px;
+    left: 24px;
+  }
+  .habico-mobile-logo :is(svg, img) {
+    max-width: 110px;
+    max-height: 30px;
+    width: auto;
+  }
+}
+@media (max-width: 380px) {
+  .habico-form-rij {
+    grid-template-columns: 1fr;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .habico-login *,
+  .habico-login *::before,
+  .habico-login *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .habico-marquee {
+    overflow-x: auto;
+  }
+  .habico-kaartgroep[aria-hidden="true"] {
+    display: none;
   }
 }
